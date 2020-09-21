@@ -9,7 +9,14 @@ This plugin is for WooCommerce Support. It's aim is to allow Happiness Engineers
 
 ### Features
 
-* Export shipping zones, including settings, methods and their settings, shipping classes, and even table rates.
+#### Export shipping settings
+
+* Exports and imports shipping zones. When importing, it will add additional shipping zones with `(imported)` in the name.
+* Exports and imports shipping methods included in the zones.
+* Export includes main shipping method settings, and it will overwrite any settings in the store. Example, if FedEx is installed, it will overwrite the data in the store with the imported data like API keys, etc.
+* Exports and imports shipping classes. On import, it will add to what already exists. If a classe with the same name is found, it is skipped. These have to be brought over or Flat Rate and Table Rates do not work.
+* Exports and imports Table Rate settings. 
+
 
 
 ### Installation
