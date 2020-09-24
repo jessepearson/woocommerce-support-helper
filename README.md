@@ -17,6 +17,17 @@ This plugin is for WooCommerce Support. It's aim is to allow Happiness Engineers
 * Exports and imports shipping classes. On import, it will add to what already exists. If a classe with the same name is found, it is skipped. These have to be brought over or Flat Rate and Table Rates do not work.
 * Exports and imports Table Rate settings. 
 
+#### Export payment gateways
+
+* Will export payment gateways and all of their settings.
+* When importing it overwrites any existing settings.
+
+#### Export payment gateways
+
+Export and import (overwrite) settings for:
+
+* General settings tab
+* Product settings tab
 
 
 ### Installation
