@@ -79,13 +79,13 @@ class WCSH_File_Handler {
 	 * @version 1.0.0
 	 */
 	public function get_file_data( $type = null ) {
-
+		WCSH_Logger::log( $type );
 		$this->check_file( $type );
 
 		if ( $this->can_use_zip() ) {
-			$file_data = $this->open_zip( $_FILES['shipping_zone_import']['tmp_name'] );
+			$file_data = $this->open_zip( $_FILES[ $type ]['tmp_name'] );
 		} else {
-			$file_data = file_get_contents( $_FILES['shipping_zone_import']['tmp_name'] );
+			$file_data = file_get_contents( $_FILES[ $type ]['tmp_name'] );
 		}
 
 		if ( ! $this->is_json( $file_data ) ) {

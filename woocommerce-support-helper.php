@@ -69,8 +69,14 @@ if ( ! class_exists( 'WooCommerce_Support_Helper' ) ) {
 				// require_once( 'includes/class-wcsh-settings.php' );
 				require_once( 'includes/class-wcsh-tools.php' );
 				require_once( 'includes/class-wcsh-file-handler.php' );
+				require_once( 'includes/class-wcsh-export.php' );
+				require_once( 'includes/class-wcsh-import.php' );
 				require_once( 'includes/class-wcsh-shipping-export.php' );
 				require_once( 'includes/class-wcsh-shipping-import.php' );
+				require_once( 'includes/class-wcsh-payment-export.php' );
+				require_once( 'includes/class-wcsh-payment-import.php' );
+				require_once( 'includes/class-wcsh-settings-tabs-export.php' );
+				require_once( 'includes/class-wcsh-settings-tabs-import.php' );
 			}
 		}
 	}

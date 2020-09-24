@@ -6,7 +6,7 @@
  * @since   1.0.0
  * @version 1.0.0
  */
-class WCSH_Shipping_Export {
+class WCSH_Shipping_Export extends WCSH_Export {
 
 	/**
 	 * 
@@ -60,22 +60,6 @@ class WCSH_Shipping_Export {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function export( $type = null ) {
-
-		// $file_handler    = new WCSH_File_Handler();
-		// $this->file_data = $file_handler->get_file_data( $type );
-
-		if ( null !== $type ) {
-			call_user_func( [ $this, $type ] );
-		}
-	}
-
-	/**
-	 * 
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
 	public function shipping_zone_export() {
 
 		// Get shipping object, then classes.
@@ -95,9 +79,8 @@ class WCSH_Shipping_Export {
 
 		// Get the base shipping settings.
 		$settings = $this->get_shipping_settings();
-		WCSH_Logger::log( '$settings: '. print_r( $settings, true ) );
 
-		$export = [ 
+		$this->export_data = [ 
 			'classes'  => $classes,
 			'zones'    => $zones,
 			'settings' => $settings,
@@ -105,17 +88,14 @@ class WCSH_Shipping_Export {
 
 		// Check for Table Rates and add them, if needed.
 		if ( $this->has_table_rates() ) {
-			$export['table_rates']           = $this->get_table_rates();
-			$export['table_rate_priorities'] = $this->get_table_rate_priorities( $export['table_rates'] );
+			$this->export_data['table_rates']           = $this->get_table_rates();
+			$this->export_data['table_rate_priorities'] = $this->get_table_rate_priorities( $export['table_rates'] );
 
 			$notice = 'Table Rates were found, including them.';
 			WCSH_Logger::log( $notice );
 		}
-		
-		// Convert to json and export.
-		$export_json  = json_encode( $export );
-		$file_handler = new WCSH_File_Handler();
-		$file_handler->trigger_download( $export_json, 'shipping-zones' );
+
+		$this->export_file( 'shipping-zones' );
 	}
 
 	/**

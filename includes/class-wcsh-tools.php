@@ -157,6 +157,102 @@ class WCSH_Tools {
 					</table>
 				</form>
 
+				<h3>Export Payment Data</h3>
+				<form action="<?php echo $action_url; ?>" method="post">
+					<table>
+						<tr>
+							<td>
+								<input type="submit" class="button" value="Export Payment Data" /> <label>Exports Payment Data.</label>
+								<input type="hidden" name="action" value="export_payment_data" />
+								<?php wp_nonce_field( 'export_payment_data' ); ?>
+							</td>
+						</tr>
+					</table>
+				</form>
+
+				<h3>Import Payment Data</h3>
+				<form enctype="multipart/form-data" action="<?php echo $action_url; ?>" method="post">
+					<table>
+						<tr>
+							<td>
+								<label>Choose a file (<?php echo $file_ext; ?>).</label><input type="file" name="payment_data_import" />
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								<input type="submit" class="button" value="Import Payment Data" /> <label>Imports payment data.</label>
+								<input type="hidden" name="action" value="import_payment_data" />
+								<?php wp_nonce_field( 'import_payment_data' ); ?>
+							</td>
+						</tr>
+					</table>
+				</form>
+
+				<h3>Export General Tab Settings</h3>
+				<form action="<?php echo $action_url; ?>" method="post">
+					<table>
+						<tr>
+							<td>
+								<input type="submit" class="button" value="Export General Tab Settings" /> <label>Exports General Tab Settings.</label>
+								<input type="hidden" name="action" value="export_general_settings" />
+								<?php wp_nonce_field( 'export_general_settings' ); ?>
+							</td>
+						</tr>
+					</table>
+				</form>
+
+				<h3>Import General Tab Settings</h3>
+				<form enctype="multipart/form-data" action="<?php echo $action_url; ?>" method="post">
+					<table>
+						<tr>
+							<td>
+								<label>Choose a file (<?php echo $file_ext; ?>).</label><input type="file" name="general_tab_import" />
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								<input type="submit" class="button" value="Import General Tab Settings" /> <label>Imports General Tab Settings.</label>
+								<input type="hidden" name="action" value="import_general_settings" />
+								<?php wp_nonce_field( 'import_general_settings' ); ?>
+							</td>
+						</tr>
+					</table>
+				</form>
+
+				<h3>Export Products Tab Settings</h3>
+				<form action="<?php echo $action_url; ?>" method="post">
+					<table>
+						<tr>
+							<td>
+								<input type="submit" class="button" value="Export Products Tab Settings" /> <label>Exports Products Tab Settings.</label>
+								<input type="hidden" name="action" value="export_products_settings" />
+								<?php wp_nonce_field( 'export_products_settings' ); ?>
+							</td>
+						</tr>
+					</table>
+				</form>
+
+				<h3>Import Products Tab Settings</h3>
+				<form enctype="multipart/form-data" action="<?php echo $action_url; ?>" method="post">
+					<table>
+						<tr>
+							<td>
+								<label>Choose a file (<?php echo $file_ext; ?>).</label><input type="file" name="products_tab_import" />
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								<input type="submit" class="button" value="Import Products Tab Settings" /> <label>Imports Products Tab Settings.</label>
+								<input type="hidden" name="action" value="import_products_settings" />
+								<?php wp_nonce_field( 'import_products_settings' ); ?>
+							</td>
+						</tr>
+					</table>
+				</form>
+
 			</div>
 		</div>
 		<?php
@@ -188,6 +284,12 @@ class WCSH_Tools {
 			'export_shipping_zones',
 			'import_shipping_zones',
 			'delete_shipping_zones',
+			'export_payment_data',
+			'import_payment_data',
+			'export_general_settings',
+			'import_general_settings',
+			'export_products_settings',
+			'import_products_settings',
 		];
 
 		if ( ! in_array( $_POST['action'], $actions ) ) {
@@ -203,32 +305,165 @@ class WCSH_Tools {
 	}
 
 	/**
-	 * An exmple processing function.
+	 * 
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function example_processing_function() {
-		WCSH_Logger::log( 'Begin example processing.' );
+	public function export_products_settings() {
+		WCSH_Logger::log( 'Export of Products Tab Settings requested.' );
 
 		try {
-
-			if ( true ) {
-				WCSH_Logger::log( 'That worked.' );
-				$this->print_notice( 'That worked.' );
-
-			} else  {
-				WCSH_Logger::log( 'That failed.' );
-				throw new Exception( 'That failed!' );
-			}
-
-			$this->print_notice( 'Done processing.' );
+			// Fire up our exporter and hand off.
+			$exporter = new WCSH_Settings_Tabs_Export();
+			$exporter->export( 'products_tab_export' );
 
 		} catch ( Exception $e ) {
 
-			$this->print_notice( $e->getMessage() );
+			$notice = 'Products Tab Settings export failed: '. $e->getMessage();
+			WCSH_Logger::log( $notice );
+			$this->print_notice( $notice, 'error' );
 			return;
 		}
+
+		$notice = 'Products Tab Settings exported successfully.';
+		WCSH_Logger::log( $notice );
+		$this->print_notice( $notice, 'success' );
+	}
+
+	/**
+	 * 
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 */
+	public function import_products_settings() {
+		WCSH_Logger::log( 'Import of Products Tab Settings requested.' );
+
+		try {
+			// Fire up our importer and hand off.
+			$importer = new WCSH_Settings_Tabs_Import();
+			$importer->import( 'products_tab_import' );
+
+		} catch ( Exception $e ) {
+			
+			$notice = 'Import failed: ' . $e->getMessage();
+			WCSH_Logger::log( $notice );
+			$this->print_notice( $notice, 'error' );
+			return;
+		}
+
+		$notice = 'Products Tab Settings imported successfully.';
+		WCSH_Logger::log( $notice );
+		$this->print_notice( $notice, 'success' );
+	}
+
+	/**
+	 * 
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 */
+	public function export_general_settings() {
+		WCSH_Logger::log( 'Export of General Tab Settings requested.' );
+
+		try {
+			// Fire up our exporter and hand off.
+			$exporter = new WCSH_Settings_Tabs_Export();
+			$exporter->export( 'general_tab_export' );
+
+		} catch ( Exception $e ) {
+
+			$notice = 'General Tab Settings export failed: '. $e->getMessage();
+			WCSH_Logger::log( $notice );
+			$this->print_notice( $notice, 'error' );
+			return;
+		}
+
+		$notice = 'General Tab Settings exported successfully.';
+		WCSH_Logger::log( $notice );
+		$this->print_notice( $notice, 'success' );
+	}
+
+	/**
+	 * 
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 */
+	public function import_general_settings() {
+		WCSH_Logger::log( 'Import of General Tab Settings requested.' );
+
+		try {
+			// Fire up our importer and hand off.
+			$importer = new WCSH_Settings_Tabs_Import();
+			$importer->import( 'general_tab_import' );
+
+		} catch ( Exception $e ) {
+			
+			$notice = 'Import failed: ' . $e->getMessage();
+			WCSH_Logger::log( $notice );
+			$this->print_notice( $notice, 'error' );
+			return;
+		}
+
+		$notice = 'General Tab Settings imported successfully.';
+		WCSH_Logger::log( $notice );
+		$this->print_notice( $notice, 'success' );
+	}
+
+	/**
+	 * 
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 */
+	public function export_payment_data() {
+		WCSH_Logger::log( 'Export of payment data requested.' );
+
+		try {
+			// Fire up our exporter and hand off.
+			$exporter = new WCSH_Payment_Export();
+			$exporter->export( 'payment_data_export' );
+
+		} catch ( Exception $e ) {
+
+			$notice = 'Payment data export failed: '. $e->getMessage();
+			WCSH_Logger::log( $notice );
+			$this->print_notice( $notice, 'error' );
+			return;
+		}
+
+		$notice = 'Payment data exported successfully.';
+		WCSH_Logger::log( $notice );
+		$this->print_notice( $notice, 'success' );
+	}
+
+	/**
+	 * 
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 */
+	public function import_payment_data() {
+		WCSH_Logger::log( 'Import of payment data requested.' );
+
+		try {
+			// Fire up our importer and hand off.
+			$importer = new WCSH_Payment_Import();
+			$importer->import( 'payment_data_import' );
+
+		} catch ( Exception $e ) {
+			
+			$notice = 'Import failed: ' . $e->getMessage();
+			WCSH_Logger::log( $notice );
+			$this->print_notice( $notice, 'error' );
+			return;
+		}
+
+		$notice = 'Payment data imported successfully.';
+		WCSH_Logger::log( $notice );
+		$this->print_notice( $notice, 'success' );
 	}
 
 	/**
