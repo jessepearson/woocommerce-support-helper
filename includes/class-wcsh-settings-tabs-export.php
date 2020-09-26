@@ -6,7 +6,16 @@
  * @since   1.0.0
  * @version 1.0.0
  */
-class WCSH_Settings_Tabs_Export extends WCSH_Export {
+class WCSH_Settings_Tabs_Export {
+
+	/**
+	 * The instance of our class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 * @var
+	 */
+	private static $instance = null;
 
 	/**
 	 * Constructor.
@@ -14,9 +23,117 @@ class WCSH_Settings_Tabs_Export extends WCSH_Export {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function __construct() {
-
+	private function __construct() {
+		add_filter( 'wcsh_export_handlers', [ $this, 'register_export_handlers' ] );
 	}
+
+	/**
+	 * Creates and returns instance of the class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 * @return  obj   Instance of our class.
+	 */
+	public static function instance() {
+		if( ! self::$instance ) {
+			self::$instance = new WCSH_Settings_Tabs_Export();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Registers our export handlers for this class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 * @param   arr   $export_handlers | The current export handlers we're adding to.
+	 * @return  arr   The updated array of import handlers.
+	 */
+	public function register_export_handlers( $export_handlers ) {
+
+		// Add our handlers and return. 
+		$export_handlers['general_tab'] = [
+			'class'  => __CLASS__,
+			'method' => 'general_tab_export',
+			'notice' => 'Export settings from the WooCommerce > Settings > General page.',
+		];
+
+		$export_handlers['products_tab'] = [
+			'class'  => __CLASS__,
+			'method' => 'products_tab_export',
+			'notice' => 'Export settings from the WooCommerce > Settings > Products pages.',
+		];
+
+		$export_handlers['tax_tab'] = [
+			'class'  => __CLASS__,
+			'method' => 'tax_tab_export',
+			'notice' => 'Export settings from the WooCommerce > Settings > Tax page, but not tax rates.',
+		];
+
+		$export_handlers['accounts_tab'] = [
+			'class'  => __CLASS__,
+			'method' => 'accounts_tab_export',
+			'notice' => 'Export settings from the WooCommerce > Settings > Accounts &amp; Privacy page, but not tax rates.',
+		];
+
+		return $export_handlers;
+	}
+
+	/**
+	 * 
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 */
+	public function generic_tab_export( $class ) {
+
+		// We need to make sure our class is available to get settings from.
+		if ( ! class_exists( $class ) ) {
+			// This does just that.
+			$settings_pages = WC_Admin_Settings::get_settings_pages();
+		}
+
+		// Create a new settings instance, and get the sections array.
+		$settings_obj = new $class();
+		$sections     = $settings_obj->get_sections();
+		$settings     = [];
+
+		// If no sections returned, add a general one.
+		if ( 0 === count( $sections ) ) {
+			$sections = [ '' => 'General' ];
+		}
+
+		// Get settings from each section and return them.
+		$settings = $this->get_section_settings( $settings_obj, $sections );
+		return $settings;
+	}
+
+	/**
+	 * 
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 */
+	public function get_section_settings( $settings_obj, $sections ) {
+
+		// Go through each section and get settings.
+		foreach ( $sections as $section => $title ) {
+			$settings_arr = $settings_obj->get_settings( $section );
+
+			// Go through each option and get its data from the database.
+			foreach( $settings_arr as $option ) {
+
+				// We skip certain ones we don't need.
+				if ( 'title' !== $option['type'] && 'sectionend' !== $option['type']  ) {
+					$settings[ $option['id'] ] = get_option( $option['id'], $option['default'] );
+				}
+			}
+		}
+
+		return $settings;
+	}
+
 
 	/**
 	 * 
@@ -26,41 +143,8 @@ class WCSH_Settings_Tabs_Export extends WCSH_Export {
 	 */
 	public function general_tab_export() {
 
-		// We need to make sure our class is available to get settings from.
-		if ( ! class_exists( 'WC_Settings_General' ) ) {
-			// This does just that.
-			$settings_pages = WC_Admin_Settings::get_settings_pages();
-		}
-
-		// Create a new settings instance, and get the settings array.
-		$settings_obj = new WC_Settings_General();
-		$sections     = $settings_obj->get_sections();
-		$settings     = [];
-
-		if ( 0 === count( $sections ) ) {
-			$sections = [ '' => 'General' ];
-		}
-
-		WCSH_Logger::log( 'sections: ' . print_r( $sections, true ) );
-
-		foreach ( $sections as $section => $title ) {
-			$settings_arr = $settings_obj->get_settings( $section );
-
-			// Go through each option and get its data from the database.
-			foreach( $settings_arr as $option ) {
-				if ( 'title' !== $option['type'] && 'sectionend' !== $option['type']  ) {
-					$settings[ $option['id'] ] = get_option( $option['id'], $option['default'] );
-				}
-			}
-		}
-		
-		WCSH_Logger::log( 'settings: ' . print_r( $settings, true ) );
-
-		$this->export_data = [ 
-			'general_tab' => $settings,
-		];
-
-		$this->export_file( 'general-tab-settings' );
+		$settings = $this->generic_tab_export( 'WC_Settings_General' );
+		return [ 'general_tab' => $settings ];
 	}
 
 	/**
@@ -71,43 +155,45 @@ class WCSH_Settings_Tabs_Export extends WCSH_Export {
 	 */
 	public function products_tab_export() {
 
+		$settings = $this->generic_tab_export( 'WC_Settings_Products' );
+		return [ 'products_tab' => $settings ];
+	}
+
+	/**
+	 * 
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 */
+	public function tax_tab_export() {
+
 		// We need to make sure our class is available to get settings from.
-		if ( ! class_exists( 'WC_Settings_Products' ) ) {
+		if ( ! class_exists( 'WC_Settings_Tax' ) ) {
 			// This does just that.
 			$settings_pages = WC_Admin_Settings::get_settings_pages();
 		}
 
-		// Create a new settings instance, and get the settings array.
-		$settings_obj = new WC_Settings_Products();
-		$sections     = $settings_obj->get_sections();
-		$settings     = [];
+		// Create a new settings instance, and get the sections array.
+		$settings_obj = new WC_Settings_Tax();
+		$sections     = [ '' => 'General' ];
 
-		if ( 0 === count( $sections ) ) {
-			$sections = [ '' => 'General' ];
-		}
+		// Get the settings from the sections.
+		$settings = $this->get_section_settings( $settings_obj, $sections );
 
-		WCSH_Logger::log( 'sections: ' . print_r( $sections, true ) );
+		// Add settings to the export. 
+		return [ 'tax_tab' => $settings ];
+	}
 
-		foreach ( $sections as $section => $title ) {
-			$settings_arr = $settings_obj->get_settings( $section );
+	/**
+	 * 
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 */
+	public function accounts_tab_export() {
 
-			// Go through each option and get its data from the database.
-			foreach( $settings_arr as $option ) {
-				if ( 'title' !== $option['type'] && 'sectionend' !== $option['type']  ) {
-					$settings[ $option['id'] ] = get_option( $option['id'], $option['default'] );
-				}
-			}
-		}
-		
-		WCSH_Logger::log( 'settings: ' . print_r( $settings, true ) );
-
-		$export = [ 
-			'products_tab' => $settings,
-		];
-
-		// Convert to json and export.
-		$export_json  = json_encode( $export );
-		$file_handler = new WCSH_File_Handler();
-		$file_handler->trigger_download( $export_json, 'products-tab-settings' );
+		$settings = $this->generic_tab_export( 'WC_Settings_Accounts' );
+		return [ 'accounts_tab' => $settings ];
 	}
 }
+WCSH_Settings_Tabs_Export::instance();

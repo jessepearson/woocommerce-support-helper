@@ -6,7 +6,16 @@
  * @since   1.0.0
  * @version 1.0.0
  */
-class WCSH_Shipping_Import extends WCSH_Import {
+class WCSH_Shipping_Import {
+
+	/**
+	 * The instance of our class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 * @var
+	 */
+	private static $instance = null;
 
 	/**
 	 * 
@@ -41,8 +50,43 @@ class WCSH_Shipping_Import extends WCSH_Import {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function __construct() {
+	private function __construct() {
+		add_filter( 'wcsh_import_handlers', [ $this, 'register_import_handlers' ] );
+	}
 
+	/**
+	 * Creates and returns instance of the class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 * @return  obj   Instance of our class.
+	 */
+	public static function instance() {
+		if( ! self::$instance ) {
+			self::$instance = new WCSH_Shipping_Import();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Registers our import handlers for this class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 * @param   arr   $import_handlers | The current import handlers we're adding to.
+	 * @return  arr   The updated array of import handlers.
+	 */
+	public function register_import_handlers( $import_handlers ) {
+
+		// Add our handlers and return. 
+		$import_handlers['shipping_zones'] = [
+			'class'  => 'WCSH_Shipping_Import',
+			'method' => 'shipping_zone_import',
+			'notice' => 'This will import Shipping Zones (append) and their methods, Shipping Classes (append), and Shipping Options (overwrite).',
+		];
+
+		return $import_handlers;
 	}
 
 	/**
@@ -51,7 +95,10 @@ class WCSH_Shipping_Import extends WCSH_Import {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function shipping_zone_import() {
+	public function shipping_zone_import( $data ) {
+
+
+		$this->file_data = $data;
 		
 		// Load the data store for shipping zones.
 		$this->data_store = WC_Data_Store::load( 'shipping-zone' );
@@ -77,7 +124,7 @@ class WCSH_Shipping_Import extends WCSH_Import {
 	public function import_shipping_classes() {
 
 		// Go through each shipping class being imported.
-		foreach ( $this->file_data['classes'] as $class ) {
+		foreach ( $this->file_data['shipping_classes'] as $class ) {
 			
 			// Set the proper args and insert the term.
 			$args = [
@@ -98,6 +145,8 @@ class WCSH_Shipping_Import extends WCSH_Import {
 				'new'      => $term, 
 				'original' => $class,
 			];
+
+			WCSH_Logger::log( 'Shipping class added: '. $class['name'] );
 		}
 	}
 
@@ -111,17 +160,19 @@ class WCSH_Shipping_Import extends WCSH_Import {
 		global $wpdb;
 
 		// Go through each shipping zone being imported.
-		foreach ( $this->file_data['zones'] as $izone ) {
+		foreach ( $this->file_data['shipping_zones'] as $izone ) {
 			//WCSH_Logger::log( $izone[ 'zone_name' ] );
 
 			// Create the new shipping zone object, set the name and the order. 
 			$zone = new WC_Shipping_Zone( null );
-			$zone->set_zone_name( $izone[ 'zone_name' ] .' (imported)' );
+			$zone->set_zone_name( $izone[ 'zone_name' ] . ' (imported)' );
 			$zone->set_zone_order( $izone['zone_order'] + 99 );
+			WCSH_Logger::log( 'Shipping zone added: '. $izone[ 'zone_name' ] . ' (imported)' );
 
 			// Go through each location and add it to the zone, then save the zone to get the id.
 			foreach( $izone['zone_locations'] as $locations ) {
 				$zone->add_location( $locations['code'], $locations['type'] );
+				WCSH_Logger::log( 'Location added to zone: '. $locations['code'] . ' | ' . $locations['type'] );
 			}
 			$zone_id = $zone->save();
 
@@ -164,9 +215,10 @@ class WCSH_Shipping_Import extends WCSH_Import {
 						$wpdb->update( "{$wpdb->prefix}woocommerce_shipping_zone_methods", [ 'is_enabled' => 0 ], [ 'instance_id' => absint( $instance_id ) ] );
 					}
 
-
 					// This allows us to correct other things, like Table Rates.
 					$this->instance_ids[ $method['instance_id'] ] = $instance_id;
+
+					WCSH_Logger::log( 'Method added to zone: '. $instance_id . ' | ' . $method['id'] );
 				}
 			}
 		}
@@ -181,8 +233,11 @@ class WCSH_Shipping_Import extends WCSH_Import {
 	public function import_shipping_settings() {
 
 		// Go through each option and update it in the database.
-		foreach ( $this->file_data['settings'] as $option => $value ) {
+		foreach ( $this->file_data['shipping_settings'] as $option => $value ) {
 			update_option( $option, $value, 'yes' );
+
+			// Log what was updated. 
+			WCSH_Logger::log( 'Updated Shipping setting option: ' . $option );
 		}
 	}
 
@@ -225,7 +280,7 @@ class WCSH_Shipping_Import extends WCSH_Import {
 		global $wpdb;
 
 		// Do we have table rates?
-		if ( 0 >= count( $this->file_data['table_rates'] ) ) {
+		if ( 0 >= count( $this->file_data['shipping_table_rates'] ) ) {
 			return;
 		}
 
@@ -233,7 +288,7 @@ class WCSH_Shipping_Import extends WCSH_Import {
 		$this->maybe_create_table_rates_table();
 		
 		// Go through each rule for import.
-		foreach ( $this->file_data['table_rates'] as $rate ) {
+		foreach ( $this->file_data['shipping_table_rates'] as $rate ) {
 
 			// There's a possibility that there are table rates for instances that don't exist.
 			if ( ! isset( $this->instance_ids[ $rate['shipping_method_id'] ] ) ) {
@@ -296,10 +351,14 @@ class WCSH_Shipping_Import extends WCSH_Import {
 					'%s',
 				]
 			);
+
+			WCSH_Logger::log( 'Table rates have been added to method id: ' . $shipping_method_id );
 		}
 
+		//WCSH_Logger::log( print_r( $this->file_data['shipping_table_rate_priorities'], true ) );
+
 		// Go through priorities and set them all.
-		foreach ( $this->file_data['table_rate_priorities'] as $instance => $priority ) {
+		foreach ( $this->file_data['shipping_table_rate_priorities'] as $instance => $priority ) {
 
 			// There's a possibility that there are priorities for instances that don't exist.
 			if ( ! isset( $this->instance_ids[ $instance ] ) ) {
@@ -349,6 +408,12 @@ class WCSH_Shipping_Import extends WCSH_Import {
 			) $collate;
 		";
 
-		dbDelta( $sql );
+		$result = dbDelta( $sql );
+
+		if ( 0 < count( $result ) ) {
+			WCSH_Logger::log( 'Table rates table created.' );
+		}
 	}
 }
+
+WCSH_Shipping_Import::instance();

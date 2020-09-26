@@ -107,38 +107,116 @@ class WCSH_Tools {
 			exit;
 		} 
 
-		// Set the form action url.
+		// Set the form action url and file type.
 		$action_url = add_query_arg( [ 'page' => 'woocommerce-support-helper' ], admin_url( 'admin.php' ) );
 		$file_ext   = WCSH_File_Handler::can_use_zip() ? '.zip' : '.json';
+
+		// 
+		if ( isset( $_GET['action'] ) && 'confirm_import' == $_GET['action'] ) {
+
+			// Get the types of settings that are in the data.
+			$import_data = get_option( 'wcsh_import_temp' );
+			$import_types = array_keys( $import_data );
+
+			// Get import handlers.
+			$importer = WCSH_Import::instance();
+			$handlers = $importer->get_import_handlers();
+			?>
+
+			<h3>Confirm Settings Import</h3>
+			<form action="<?php echo $action_url; ?>" method="post">
+				<table>
+					<tr>
+						<td>
+							You are about to import settings for:
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<ul>
+							<?php
+								foreach ( $handlers as $handler => $options ) {
+									if ( in_array( $handler, $import_types ) ) {
+										?>
+										<li>
+											<input type="checkbox" name="import[]" id="<?php echo $handler; ?>" value="<?php echo $handler; ?>" checked="checked">
+											&nbsp;<label for="<?php echo $handler; ?>"><?php echo $handler; ?></label> - <?php echo $options['notice']; ?>
+										</li>
+										<?php
+									}
+									
+								}
+							?>
+							</ul>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="submit" class="button" value="Confirm import" />
+							<input type="hidden" name="action" value="confirm_import" />
+							<?php wp_nonce_field( 'confirm_import' ); ?>
+						</td>
+					</tr>
+				</table>
+			</form>
+			<?php
+		}
+
+
+
+		// Get export handlers.
+		$exporter = WCSH_Export::instance();
+		$handlers = $exporter->get_export_handlers();
 		?>
 
-				<h3>Export Shipping Data</h3>
+				<h3>Confirm Settings Export</h3>
 				<form action="<?php echo $action_url; ?>" method="post">
 					<table>
 						<tr>
 							<td>
-								<input type="submit" class="button" value="Export Shipping Data" /> <label>Exports Shipping Zones, Methods, and Settings.</label>
-								<input type="hidden" name="action" value="export_shipping_zones" />
-								<?php wp_nonce_field( 'export_shipping_zones' ); ?>
+								Export the below selected settings:
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<ul>
+								<?php
+									foreach ( $handlers as $handler => $options ) {
+										?>
+										<li>
+											<input type="checkbox" name="export[]" id="<?php echo $handler; ?>" value="<?php echo $handler; ?>" checked="checked">
+											&nbsp;<label for="<?php echo $handler; ?>"><?php echo $handler; ?></label> - <?php echo $options['notice']; ?>
+										</li>
+										<?php
+									}
+								?>
+								</ul>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="submit" class="button" value="Export Settings" />
+								<input type="hidden" name="action" value="export_settings" />
+								<?php wp_nonce_field( 'export_settings' ); ?>
 							</td>
 						</tr>
 					</table>
 				</form>
 
-				<h3>Import Shipping Data</h3>
+				<h3>Import Settings</h3>
 				<form enctype="multipart/form-data" action="<?php echo $action_url; ?>" method="post">
 					<table>
 						<tr>
 							<td>
-								<label>Choose a file (<?php echo $file_ext; ?>).</label><input type="file" name="shipping_zone_import" />
+								<label>Choose a file (<?php echo $file_ext; ?>).</label><input type="file" name="import_settings" />
 							</td>
 						</tr>
 
 						<tr>
 							<td>
-								<input type="submit" class="button" value="Import Shipping Data" /> <label>Imports shipping data.</label>
-								<input type="hidden" name="action" value="import_shipping_zones" />
-								<?php wp_nonce_field( 'import_shipping_zones' ); ?>
+								<input type="submit" class="button" value="Import settings" /> <label>Imports settings file.</label>
+								<input type="hidden" name="action" value="import_settings" />
+								<?php wp_nonce_field( 'import_settings' ); ?>
 							</td>
 						</tr>
 					</table>
@@ -157,101 +235,7 @@ class WCSH_Tools {
 					</table>
 				</form>
 
-				<h3>Export Payment Data</h3>
-				<form action="<?php echo $action_url; ?>" method="post">
-					<table>
-						<tr>
-							<td>
-								<input type="submit" class="button" value="Export Payment Data" /> <label>Exports Payment Data.</label>
-								<input type="hidden" name="action" value="export_payment_data" />
-								<?php wp_nonce_field( 'export_payment_data' ); ?>
-							</td>
-						</tr>
-					</table>
-				</form>
 
-				<h3>Import Payment Data</h3>
-				<form enctype="multipart/form-data" action="<?php echo $action_url; ?>" method="post">
-					<table>
-						<tr>
-							<td>
-								<label>Choose a file (<?php echo $file_ext; ?>).</label><input type="file" name="payment_data_import" />
-							</td>
-						</tr>
-
-						<tr>
-							<td>
-								<input type="submit" class="button" value="Import Payment Data" /> <label>Imports payment data.</label>
-								<input type="hidden" name="action" value="import_payment_data" />
-								<?php wp_nonce_field( 'import_payment_data' ); ?>
-							</td>
-						</tr>
-					</table>
-				</form>
-
-				<h3>Export General Tab Settings</h3>
-				<form action="<?php echo $action_url; ?>" method="post">
-					<table>
-						<tr>
-							<td>
-								<input type="submit" class="button" value="Export General Tab Settings" /> <label>Exports General Tab Settings.</label>
-								<input type="hidden" name="action" value="export_general_settings" />
-								<?php wp_nonce_field( 'export_general_settings' ); ?>
-							</td>
-						</tr>
-					</table>
-				</form>
-
-				<h3>Import General Tab Settings</h3>
-				<form enctype="multipart/form-data" action="<?php echo $action_url; ?>" method="post">
-					<table>
-						<tr>
-							<td>
-								<label>Choose a file (<?php echo $file_ext; ?>).</label><input type="file" name="general_tab_import" />
-							</td>
-						</tr>
-
-						<tr>
-							<td>
-								<input type="submit" class="button" value="Import General Tab Settings" /> <label>Imports General Tab Settings.</label>
-								<input type="hidden" name="action" value="import_general_settings" />
-								<?php wp_nonce_field( 'import_general_settings' ); ?>
-							</td>
-						</tr>
-					</table>
-				</form>
-
-				<h3>Export Products Tab Settings</h3>
-				<form action="<?php echo $action_url; ?>" method="post">
-					<table>
-						<tr>
-							<td>
-								<input type="submit" class="button" value="Export Products Tab Settings" /> <label>Exports Products Tab Settings.</label>
-								<input type="hidden" name="action" value="export_products_settings" />
-								<?php wp_nonce_field( 'export_products_settings' ); ?>
-							</td>
-						</tr>
-					</table>
-				</form>
-
-				<h3>Import Products Tab Settings</h3>
-				<form enctype="multipart/form-data" action="<?php echo $action_url; ?>" method="post">
-					<table>
-						<tr>
-							<td>
-								<label>Choose a file (<?php echo $file_ext; ?>).</label><input type="file" name="products_tab_import" />
-							</td>
-						</tr>
-
-						<tr>
-							<td>
-								<input type="submit" class="button" value="Import Products Tab Settings" /> <label>Imports Products Tab Settings.</label>
-								<input type="hidden" name="action" value="import_products_settings" />
-								<?php wp_nonce_field( 'import_products_settings' ); ?>
-							</td>
-						</tr>
-					</table>
-				</form>
 
 			</div>
 		</div>
@@ -260,9 +244,6 @@ class WCSH_Tools {
 
 	/**
 	 * Catches form requests.
-	 *
-	 * Here you will need to add your action to the $actions array. 
-	 * Next your action will need to be added to the switch statement to call your processing function.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
@@ -281,15 +262,10 @@ class WCSH_Tools {
 
 		// Actions correspond to the tools page.
 		$actions = [
-			'export_shipping_zones',
-			'import_shipping_zones',
 			'delete_shipping_zones',
-			'export_payment_data',
-			'import_payment_data',
-			'export_general_settings',
-			'import_general_settings',
-			'export_products_settings',
-			'import_products_settings',
+			'import_settings',
+			'confirm_import',
+			'export_settings',
 		];
 
 		if ( ! in_array( $_POST['action'], $actions ) ) {
@@ -310,23 +286,30 @@ class WCSH_Tools {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function export_products_settings() {
-		WCSH_Logger::log( 'Export of Products Tab Settings requested.' );
+	public function export_settings() {
 
 		try {
+
+			if ( ! isset( $_POST['export'] ) || empty( $_POST['export'] ) ) {
+				throw new Exception( 'Export submitted, but nothing selected.' );
+			}
+
+			WCSH_Logger::log( 'Export of settings requested.' );
+
 			// Fire up our exporter and hand off.
-			$exporter = new WCSH_Settings_Tabs_Export();
-			$exporter->export( 'products_tab_export' );
+			$exporter = WCSH_Export::instance();
+			$exporter->confirmed_exports = $_POST['export']; 
+			$exporter->export();
 
 		} catch ( Exception $e ) {
-
-			$notice = 'Products Tab Settings export failed: '. $e->getMessage();
+			
+			$notice = 'Export failed: ' . $e->getMessage();
 			WCSH_Logger::log( $notice );
 			$this->print_notice( $notice, 'error' );
 			return;
 		}
 
-		$notice = 'Products Tab Settings exported successfully.';
+		$notice = 'Settings exported successfully.';
 		WCSH_Logger::log( $notice );
 		$this->print_notice( $notice, 'success' );
 	}
@@ -337,13 +320,20 @@ class WCSH_Tools {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function import_products_settings() {
-		WCSH_Logger::log( 'Import of Products Tab Settings requested.' );
+	public function confirm_import() {
 
 		try {
+
+			if ( ! isset( $_POST['import'] ) || empty( $_POST['import'] ) ) {
+				throw new Exception( 'Import confirmed, but nothing selected.' );
+			}
+
+			WCSH_Logger::log( 'Import Settings confirmed.' );
+
 			// Fire up our importer and hand off.
-			$importer = new WCSH_Settings_Tabs_Import();
-			$importer->import( 'products_tab_import' );
+			$importer = WCSH_Import::instance();
+			$importer->confirmed_imports = $_POST['import']; 
+			$importer->complete_import();
 
 		} catch ( Exception $e ) {
 			
@@ -353,7 +343,7 @@ class WCSH_Tools {
 			return;
 		}
 
-		$notice = 'Products Tab Settings imported successfully.';
+		$notice = 'Settings imported successfully.';
 		WCSH_Logger::log( $notice );
 		$this->print_notice( $notice, 'success' );
 	}
@@ -364,40 +354,13 @@ class WCSH_Tools {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function export_general_settings() {
-		WCSH_Logger::log( 'Export of General Tab Settings requested.' );
-
-		try {
-			// Fire up our exporter and hand off.
-			$exporter = new WCSH_Settings_Tabs_Export();
-			$exporter->export( 'general_tab_export' );
-
-		} catch ( Exception $e ) {
-
-			$notice = 'General Tab Settings export failed: '. $e->getMessage();
-			WCSH_Logger::log( $notice );
-			$this->print_notice( $notice, 'error' );
-			return;
-		}
-
-		$notice = 'General Tab Settings exported successfully.';
-		WCSH_Logger::log( $notice );
-		$this->print_notice( $notice, 'success' );
-	}
-
-	/**
-	 * 
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	public function import_general_settings() {
-		WCSH_Logger::log( 'Import of General Tab Settings requested.' );
+	public function import_settings() {
+		WCSH_Logger::log( 'Import Settings requested.' );
 
 		try {
 			// Fire up our importer and hand off.
-			$importer = new WCSH_Settings_Tabs_Import();
-			$importer->import( 'general_tab_import' );
+			$importer = WCSH_Import::instance();
+			$importer->import();
 
 		} catch ( Exception $e ) {
 			
@@ -407,63 +370,9 @@ class WCSH_Tools {
 			return;
 		}
 
-		$notice = 'General Tab Settings imported successfully.';
-		WCSH_Logger::log( $notice );
-		$this->print_notice( $notice, 'success' );
-	}
-
-	/**
-	 * 
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	public function export_payment_data() {
-		WCSH_Logger::log( 'Export of payment data requested.' );
-
-		try {
-			// Fire up our exporter and hand off.
-			$exporter = new WCSH_Payment_Export();
-			$exporter->export( 'payment_data_export' );
-
-		} catch ( Exception $e ) {
-
-			$notice = 'Payment data export failed: '. $e->getMessage();
-			WCSH_Logger::log( $notice );
-			$this->print_notice( $notice, 'error' );
-			return;
-		}
-
-		$notice = 'Payment data exported successfully.';
-		WCSH_Logger::log( $notice );
-		$this->print_notice( $notice, 'success' );
-	}
-
-	/**
-	 * 
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	public function import_payment_data() {
-		WCSH_Logger::log( 'Import of payment data requested.' );
-
-		try {
-			// Fire up our importer and hand off.
-			$importer = new WCSH_Payment_Import();
-			$importer->import( 'payment_data_import' );
-
-		} catch ( Exception $e ) {
-			
-			$notice = 'Import failed: ' . $e->getMessage();
-			WCSH_Logger::log( $notice );
-			$this->print_notice( $notice, 'error' );
-			return;
-		}
-
-		$notice = 'Payment data imported successfully.';
-		WCSH_Logger::log( $notice );
-		$this->print_notice( $notice, 'success' );
+		// $notice = 'Settings imported successfully.';
+		// WCSH_Logger::log( $notice );
+		// $this->print_notice( $notice, 'success' );
 	}
 
 	/**
@@ -482,60 +391,6 @@ class WCSH_Tools {
 		}
 
 		$notice = count( $zones ) . ' Shipping Zones have been deleted.';
-		WCSH_Logger::log( $notice );
-		$this->print_notice( $notice, 'success' );
-	}
-
-	/**
-	 * Exports the Shipping Zones, their methods, and even Table Rates.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	public function export_shipping_zones() {
-		WCSH_Logger::log( 'Export of shipping zones requested.' );
-
-		try {
-			// Fire up our exporter and hand off.
-			$exporter = new WCSH_Shipping_Export();
-			$exporter->export( 'shipping_zone_export' );
-
-		} catch ( Exception $e ) {
-
-			$notice = 'Shipping zone export failed: '. $e->getMessage();
-			WCSH_Logger::log( $notice );
-			$this->print_notice( $notice, 'error' );
-			return;
-		}
-
-		$notice = 'Shipping Zones, Methods, and Settings exported successfully.';
-		WCSH_Logger::log( $notice );
-		$this->print_notice( $notice, 'success' );
-	}
-
-	/**
-	 * Handler for importing the Shipping Zone data.
-	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
-	 */
-	public function import_shipping_zones() {
-		WCSH_Logger::log( 'Import of shipping zones requested.' );
-
-		try {
-			// Fire up our importer and hand off.
-			$importer = new WCSH_Shipping_Import();
-			$importer->import( 'shipping_zone_import' );
-
-		} catch ( Exception $e ) {
-			
-			$notice = 'Import failed: ' . $e->getMessage();
-			WCSH_Logger::log( $notice );
-			$this->print_notice( $notice, 'error' );
-			return;
-		}
-
-		$notice = 'Shipping Zones, Methods, and Settings imported successfully.';
 		WCSH_Logger::log( $notice );
 		$this->print_notice( $notice, 'success' );
 	}

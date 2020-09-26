@@ -22,12 +22,14 @@ This plugin is for WooCommerce Support. It's aim is to allow Happiness Engineers
 * Will export payment gateways and all of their settings.
 * When importing it overwrites any existing settings.
 
-#### Export payment gateways
+#### Export settings tabs
 
 Export and import (overwrite) settings for:
 
 * General settings tab
 * Product settings tab
+* Tax settings tab
+* Accounts & Privacy settings tab
 
 
 ### Installation
@@ -42,3 +44,4 @@ Export and import (overwrite) settings for:
 After installing & activating the plugin:
 
 1. Go to WooCommerce > Support Helper.
+1. Use the tool you'd like.

@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: WooCommerce Support Helper
- * Plugin URI: 
- * Description: 
+ * Plugin URI: https://github.com/jessepearson/woocommerce-support-helper
+ * Description: A plugin to export and import many settings in WooCommerce, along with other things.
  * Author: Jesse Pearson
  * Author URI: https://jessepearson.net
  * Text Domain: woocommerce-support-helper
@@ -30,28 +30,7 @@ if ( ! class_exists( 'WooCommerce_Support_Helper' ) ) {
 		 * @version 1.0.0
 		 */
 		public function __construct() {
-			// add_action( 'init', [ $this, 'check_dependencies' ] );
 			add_action( 'init', [ $this, 'includes' ] );
-		}
-
-		/**
-		 * Checks dependencies.
-		 * 
-		 * @since   1.0.0
-		 * @version 1.0.0
-		 */
-		public function check_dependencies() {
-			// Get dependencies class file.
-			require_once( 'includes/class-wcsh-dependencies.php' );
-			
-			// Check to see if we need to deactivate the plugin.
-			$dependencies = new WCSH_Dependencies( __FILE__ );
-			$deactivated  = $dependencies->maybe_deactivate_plugin();
-
-			// If we didn't deactivate, include everything else.
-			if ( ! $deactivated ) {
-				$this->includes();
-			}
 		}
 
 		/**
@@ -61,12 +40,10 @@ if ( ! class_exists( 'WooCommerce_Support_Helper' ) ) {
 		 * @version 1.0.0
 		 */
 		public function includes() {
-			// Files we always need.
-			require_once( 'includes/class-wcsh-logger.php' );
 		
 			// Files only the admin needs.
 			if ( is_admin() ) {
-				// require_once( 'includes/class-wcsh-settings.php' );
+				require_once( 'includes/class-wcsh-logger.php' );
 				require_once( 'includes/class-wcsh-tools.php' );
 				require_once( 'includes/class-wcsh-file-handler.php' );
 				require_once( 'includes/class-wcsh-export.php' );

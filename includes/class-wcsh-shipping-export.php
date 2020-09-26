@@ -6,16 +6,16 @@
  * @since   1.0.0
  * @version 1.0.0
  */
-class WCSH_Shipping_Export extends WCSH_Export {
+class WCSH_Shipping_Export {
 
 	/**
-	 * 
+	 * The instance of our class.
 	 *
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 * @var
 	 */
-	public $file_data;
+	private static $instance = null;
 
 	/**
 	 * 
@@ -50,8 +50,43 @@ class WCSH_Shipping_Export extends WCSH_Export {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function __construct() {
+	private function __construct() {
+		add_filter( 'wcsh_export_handlers', [ $this, 'register_export_handlers' ] );
+	}
 
+	/**
+	 * Creates and returns instance of the class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 * @return  obj   Instance of our class.
+	 */
+	public static function instance() {
+		if( ! self::$instance ) {
+			self::$instance = new WCSH_Shipping_Export();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Registers our export handlers for this class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 * @param   arr   $export_handlers | The current export handlers we're adding to.
+	 * @return  arr   The updated array of import handlers.
+	 */
+	public function register_export_handlers( $export_handlers ) {
+
+		// Add our handlers and return. 
+		$export_handlers['shipping_zones'] = [
+			'class'  => 'WCSH_Shipping_Export',
+			'method' => 'shipping_zone_export',
+			'notice' => 'Export the Shipping Zones, their Shipping Methods, Shipping Classes, and Shipping Options under the WooCommerce > Settings > Shipping page.',
+		];
+
+		return $export_handlers;
 	}
 
 	/**
@@ -69,33 +104,29 @@ class WCSH_Shipping_Export extends WCSH_Export {
 		// Get the shipping zones, throw error if nothing returned.
 		$zones = WC_Shipping_Zones::get_zones( 'json' );
 		if ( empty( $zones ) ) {
-			$notice = 'There are no zones to export.';
-			WCSH_Logger::log( $notice );
-			throw new Exception( $notice );					
+			throw new Exception( 'There are no zones to export.' );					
 		}
 
-		$notice = count( $zones ) . ' Shipping Zones have been found.';
-		WCSH_Logger::log( $notice );
+		WCSH_Logger::log( count( $zones ) . ' Shipping Zones have been found.' );
 
 		// Get the base shipping settings.
 		$settings = $this->get_shipping_settings();
 
-		$this->export_data = [ 
-			'classes'  => $classes,
-			'zones'    => $zones,
-			'settings' => $settings,
+		$export = [ 
+			'shipping_classes'  => $classes,
+			'shipping_zones'    => $zones,
+			'shipping_settings' => $settings,
 		];
 
 		// Check for Table Rates and add them, if needed.
 		if ( $this->has_table_rates() ) {
-			$this->export_data['table_rates']           = $this->get_table_rates();
-			$this->export_data['table_rate_priorities'] = $this->get_table_rate_priorities( $export['table_rates'] );
+			$export['shipping_table_rates']           = $this->get_table_rates();
+			$export['shipping_table_rate_priorities'] = $this->get_table_rate_priorities( $export['shipping_table_rates'] );
 
-			$notice = 'Table Rates were found, including them.';
-			WCSH_Logger::log( $notice );
+			WCSH_Logger::log( 'Table Rates were found, including them.' );
 		}
 
-		$this->export_file( 'shipping-zones' );
+		return $export;
 	}
 
 	/**
@@ -181,3 +212,5 @@ class WCSH_Shipping_Export extends WCSH_Export {
 		return $priorities;
 	}
 }
+
+WCSH_Shipping_Export::instance();

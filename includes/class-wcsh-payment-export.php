@@ -6,7 +6,16 @@
  * @since   1.0.0
  * @version 1.0.0
  */
-class WCSH_Payment_Export extends WCSH_Export {
+class WCSH_Payment_Export {
+
+	/**
+	 * The instance of our class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 * @var
+	 */
+	private static $instance = null;
 
 	/**
 	 * Constructor.
@@ -14,8 +23,43 @@ class WCSH_Payment_Export extends WCSH_Export {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function __construct() {
+	private function __construct() {
+		add_filter( 'wcsh_export_handlers', [ $this, 'register_export_handlers' ] );
+	}
 
+	/**
+	 * Creates and returns instance of the class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 * @return  obj   Instance of our class.
+	 */
+	public static function instance() {
+		if( ! self::$instance ) {
+			self::$instance = new WCSH_Payment_Export();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Registers our export handlers for this class.
+	 *
+	 * @since   1.0.0
+	 * @version 1.0.0
+	 * @param   arr   $export_handlers | The current export handlers we're adding to.
+	 * @return  arr   The updated array of import handlers.
+	 */
+	public function register_export_handlers( $export_handlers ) {
+
+		// Add our handlers and return. 
+		$export_handlers['gateways'] = [
+			'class'  => 'WCSH_Payment_Export',
+			'method' => 'payment_data_export',
+			'notice' => 'Export the payment gateways from the WooCommerce > Settings > Payments page.',
+		];
+
+		return $export_handlers;
 	}
 
 	/**
@@ -31,8 +75,7 @@ class WCSH_Payment_Export extends WCSH_Export {
 		$settings = [];
 		
 		// Log how many we have.
-		$notice = count( $gateways ) . ' Payment Gateways have been found.';
-		WCSH_Logger::log( $notice );
+		WCSH_Logger::log( count( $gateways ) . ' Payment Gateways have been found.' );
 
 		// Get each gateway's settings.
 		foreach ( $gateways as $gateway ) {
@@ -45,10 +88,12 @@ class WCSH_Payment_Export extends WCSH_Export {
 			}
 		}
 
-		$this->export_data = [ 
+		$export = [ 
 			'gateways' => $settings,
 		];
 
-		$this->export_file( 'payment-gateways' );
+		return $export;
 	}
 }
+
+WCSH_Payment_Export::instance();

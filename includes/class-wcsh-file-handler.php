@@ -78,8 +78,8 @@ class WCSH_File_Handler {
 	 * @since   1.0.0
 	 * @version 1.0.0
 	 */
-	public function get_file_data( $type = null ) {
-		WCSH_Logger::log( $type );
+	public function get_file_data( $type = 'import_settings' ) {
+		
 		$this->check_file( $type );
 
 		if ( $this->can_use_zip() ) {
@@ -126,10 +126,8 @@ class WCSH_File_Handler {
 		@ini_set( 'output_buffering', 'Off' );
 		@ini_set( 'output_handler', '' );
 
-		$filename_prefix = $prefix;
-
 		if ( $this->can_use_zip() ) {
-			$filename = sprintf( '%1$s-%2$s', $filename_prefix, date( 'Y-m-d', current_time( 'timestamp' ) ) );
+			$filename = sprintf( '%1$s-%2$s', $prefix, date( 'Y-m-d', current_time( 'timestamp' ) ) );
 
 			$this->prep_transfer();
 
@@ -145,7 +143,7 @@ class WCSH_File_Handler {
 				throw new Exception( 'Unable to export!' );
 			}
 		} else {
-			$filename = sprintf( '%1$s-%2$s', $filename_prefix, date( 'Y-m-d', current_time( 'timestamp' ) ) );
+			$filename = sprintf( '%1$s-%2$s', $prefix, date( 'Y-m-d', current_time( 'timestamp' ) ) );
 
 			$this->render_headers( $filename );
 
