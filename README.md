@@ -2,34 +2,34 @@
 
 ### Description
 
-This is still a work in progress, so please do not use on a live site.
+This is still a work in progress, so please take caution when using.
 
-This plugin is for WooCommerce Support. It's aim is to allow Happiness Engineers to install it and copy settings from WooCommerce to import into their store efficiently. 
+This plugin is for WooCommerce Support. It's aim is to allow Happiness Engineers to install it and copy settings from WooCommerce to import into their store or to share in GitHub reports efficiently. 
 
 
 ### Features
 
-#### Export shipping settings
+#### Export and import shipping settings
 
 * Exports and imports shipping zones. When importing, it will add additional shipping zones with `(imported)` in the name.
 * Exports and imports shipping methods included in the zones.
 * Export includes main shipping method settings, and it will overwrite any settings in the store. Example, if FedEx is installed, it will overwrite the data in the store with the imported data like API keys, etc.
-* Exports and imports shipping classes. On import, it will add to what already exists. If a classe with the same name is found, it is skipped. These have to be brought over or Flat Rate and Table Rates do not work.
-* Exports and imports Table Rate settings. 
+* Exports and imports shipping classes. On import, it will add to what already exists. If a class with the same name is found, it is skipped. These have to be brought over or Flat Rate and Table Rates do not work.
+* Exports and imports Table Rate settings and table rates themselves. 
 
-#### Export payment gateways
+#### Export and import payment gateway settings
 
-* Will export payment gateways and all of their settings.
+* Will export settings for payment gateways in use.
 * When importing it overwrites any existing settings.
 
-#### Export settings tabs
+#### Export and import settings tabs
 
 Export and import (overwrite) settings for:
 
-* General settings tab
-* Product settings tab
-* Tax settings tab
-* Accounts & Privacy settings tab
+* General settings tab.
+* Product settings tab.
+* Tax settings tab - tax rates not included due to they have their own csv export and import.
+* Accounts & Privacy settings tab.
 
 
 ### Installation
