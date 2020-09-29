@@ -1,4 +1,4 @@
 *** WooCommerce Support Helper Changelog ***
 
-2020-xx-xx - version 1.0.0
+2020-09-28 - version 1.0.0
 * Initial release.

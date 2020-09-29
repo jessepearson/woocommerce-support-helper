@@ -4,7 +4,7 @@
  * Plugin URI: https://github.com/jessepearson/woocommerce-support-helper
  * Description: A plugin to export and import many settings in WooCommerce, along with other things.
  * Author: Jesse Pearson
- * Author URI: https://jessepearson.net
+ * Author URI: https://github.com/jessepearson/
  * Text Domain: woocommerce-support-helper
  * Version: 1.0.0
  */
