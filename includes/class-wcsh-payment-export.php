@@ -4,7 +4,6 @@
  * 
  * @package WooCommerce_Support_Helper
  * @since   1.0.0
- * @version 1.0.0
  */
 if ( ! class_exists( 'WCSH_Payment_Export' ) ) {
 	class WCSH_Payment_Export {
@@ -67,7 +66,7 @@ if ( ! class_exists( 'WCSH_Payment_Export' ) ) {
 		 * Handler for exporting the payment data.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.0
 		 * @return  arr   Array of payment gateways and their settings.
 		 */
 		public function payment_data_export() {
@@ -90,14 +89,9 @@ if ( ! class_exists( 'WCSH_Payment_Export' ) ) {
 				}
 			}
 
-			$export = [ 
-				'gateways' => $settings,
-			];
-
-			return $export;
+			return [ 'gateways' => $settings ];
 		}
 	}
 
-	// add_action( 'plugins_loaded', 'WCSH_Payment_Export::instance' );
 	WCSH_Payment_Export::instance();
 }

@@ -4,7 +4,6 @@
  * 
  * @package WooCommerce_Support_Helper
  * @since   1.0.0
- * @version 1.0.0
  */
 if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 	class WCSH_Shipping_Import {
@@ -46,13 +45,23 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 		public $instance_ids = [];
 
 		/**
+		 * The instance of our importer.
+		 *
+		 * @since   1.1.0
+		 * @version 1.1.0
+		 * @var
+		 */
+		public $importer = null;
+
+		/**
 		 * Constructor.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.0
 		 */
 		private function __construct() {
 			add_filter( 'wcsh_import_handlers', [ $this, 'register_import_handlers' ] );
+			$this->importer = WCSH_Import::instance();
 		}
 
 		/**
@@ -234,17 +243,11 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 		 * Imports the settings under WooCommerce > Settings > Shipping > Shipping Options.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.0
 		 */
 		public function import_shipping_settings() {
-
-			// Go through each option and update it in the database.
-			foreach ( $this->file_data['shipping_settings'] as $option => $value ) {
-				update_option( $option, $value, 'yes' );
-
-				// Log what was updated. 
-				WCSH_Logger::log( 'Updated Shipping setting option: ' . $option );
-			}
+			// Hand off to generic handler.
+			$this->importer->update_generic_settings( $this->file_data['shipping_settings'] );
 		}
 
 		/**

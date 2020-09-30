@@ -5,7 +5,6 @@
  * 
  * @package WooCommerce_Support_Helper
  * @since   1.0.0
- * @version 1.0.0
  */
 if ( ! class_exists( 'WCSH_File_Handler' ) ) {
 	class WCSH_File_Handler {

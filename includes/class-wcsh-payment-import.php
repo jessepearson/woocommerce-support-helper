@@ -4,7 +4,6 @@
  * 
  * @package WooCommerce_Support_Helper
  * @since   1.0.0
- * @version 1.0.0
  */
 if ( ! class_exists( 'WCSH_Payment_Import' ) ) {
 	class WCSH_Payment_Import {
@@ -93,6 +92,5 @@ if ( ! class_exists( 'WCSH_Payment_Import' ) ) {
 		}
 	}
 
-	// add_action( 'plugins_loaded', 'WCSH_Payment_Import::instance' );
 	WCSH_Payment_Import::instance();
 }

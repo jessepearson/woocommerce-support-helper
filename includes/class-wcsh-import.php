@@ -4,7 +4,6 @@
  * 
  * @package WooCommerce_Support_Helper
  * @since   1.0.0
- * @version 1.0.0
  */
 if ( ! class_exists( 'WCSH_Import' ) ) {
 	class WCSH_Import {
@@ -191,8 +190,28 @@ if ( ! class_exists( 'WCSH_Import' ) ) {
 			// Handle the import.
 			$handler->$method( $this->file_data );
 		}
+
+		/**
+		 * Updates generic settings in the database via update_option.
+		 *
+		 * @since   1.0.0
+		 * @version 1.1.0
+		 * @param   arr   $data The sub-array from the settings import array.
+		 */
+		public function update_generic_settings( $data ) {
+			
+			// Go through each setting being imported.
+			foreach ( $data as $option => $value ) {
+
+				// Update option in the database.
+				update_option( $option, $value, 'yes' );
+
+				// Log what was updated. 
+				$notice = 'Updated setting option: ' . $option;
+				WCSH_Logger::log( $notice );
+			}
+		}
 	}
 
-	add_action( 'plugins_loaded', 'WCSH_Import::instance' );
 	WCSH_Import::instance();
 }
