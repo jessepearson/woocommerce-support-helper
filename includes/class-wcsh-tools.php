@@ -119,7 +119,6 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 				// Get import handlers.
 				$importer = WCSH_Import::instance();
 				$handlers = $importer->get_import_handlers();
-				WCSH_Logger::log( print_r( $handlers, true ) );
 				?>
 
 				<h3>Confirm Settings Import</h3>
