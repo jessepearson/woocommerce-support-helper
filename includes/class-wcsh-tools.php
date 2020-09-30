@@ -4,7 +4,6 @@
  * 
  * @package WooCommerce_Support_Helper
  * @since   1.0.0
- * @version 1.0.0
  */
 if ( ! class_exists( 'WCSH_Tools' ) ) {
 	class WCSH_Tools {
@@ -120,6 +119,7 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 				// Get import handlers.
 				$importer = WCSH_Import::instance();
 				$handlers = $importer->get_import_handlers();
+				WCSH_Logger::log( print_r( $handlers, true ) );
 				?>
 
 				<h3>Confirm Settings Import</h3>

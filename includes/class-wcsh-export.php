@@ -4,7 +4,6 @@
  * 
  * @package WooCommerce_Support_Helper
  * @since   1.0.0
- * @version 1.0.0
  */
 if ( ! class_exists( 'WCSH_Export' ) ) {
 	class WCSH_Export {
@@ -180,8 +179,67 @@ if ( ! class_exists( 'WCSH_Export' ) ) {
 			$file_handler = new WCSH_File_Handler();
 			$file_handler->trigger_download( $export_json, 'woocommerce-support-helper-export' );
 		}
+
+		/**
+		 * Handles exporting the generic tabs.
+		 *
+		 * @since   1.0.0
+		 * @version 1.1.0
+		 * @param   str   $class The class that's used for that particular settings tab.
+		 * @return  arr   An array of all of the settings for all sections under that tab.
+		 */
+		public function generic_tab_export( $class ) {
+
+			// We need to make sure our class is available to get settings from.
+			if ( ! class_exists( $class ) ) {
+				// This does just that.
+				$settings_pages = WC_Admin_Settings::get_settings_pages();
+			}
+
+			// Create a new settings instance, and get the sections array.
+			$settings_obj = new $class();
+			$sections     = method_exists( $settings_obj, 'get_sections') ? $settings_obj->get_sections() : [];
+			$settings     = [];
+
+			// If no sections returned, add a general one.
+			if ( 0 === count( $sections ) ) {
+				$sections = [ '' => 'General' ];
+			}
+
+			// Get settings from each section and return them.
+			$settings = $this->get_section_settings( $settings_obj, $sections );
+			return $settings;
+		}
+
+		/**
+		 * Gets the different sections under the tab, since there can be more than one.
+		 *
+		 * @since   1.0.0
+		 * @version 1.1.0
+		 * @param   obj   $settings_obj The settings object/class we are wanting to get settings from. 
+		 * @param   arr   $sections     Array of the sections we are getting settings from.
+		 * @return  arr   Array of the settings obtained from the sections.
+		 */
+		public function get_section_settings( $settings_obj, $sections ) {
+
+			// Go through each section and get settings.
+			foreach ( $sections as $section => $title ) {
+				$settings_arr = $settings_obj->get_settings( $section );
+
+				// Go through each option and get its data from the database.
+				foreach( $settings_arr as $option ) {
+
+					// We skip certain ones we don't need.
+					if ( 'title' !== $option['type'] && 'sectionend' !== $option['type']  ) {
+						$default                   = isset( $option['default'] ) ? $option['default'] : '';
+						$settings[ $option['id'] ] = get_option( $option['id'], $default );
+					}
+				}
+			}
+
+			return $settings;
+		}
 	}
 
-	// add_action( 'plugins_loaded', 'WCSH_Export::instance' );
 	WCSH_Export::instance();
 }

@@ -4,7 +4,6 @@
  * 
  * @package WooCommerce_Support_Helper
  * @since   1.0.0
- * @version 1.0.0
  */
 if ( ! class_exists( 'WCSH_Shipping_Export' ) ) {
 	class WCSH_Shipping_Export {
@@ -188,6 +187,5 @@ if ( ! class_exists( 'WCSH_Shipping_Export' ) ) {
 		}
 	}
 
-	//add_action( 'plugins_loaded', 'WCSH_Shipping_Export::instance' );
 	WCSH_Shipping_Export::instance();
 }

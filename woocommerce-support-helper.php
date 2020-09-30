@@ -6,7 +6,7 @@
  * Author: Jesse Pearson
  * Author URI: https://github.com/jessepearson/
  * Text Domain: woocommerce-support-helper
- * Version: 1.0.0
+ * Version: 1.1.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,7 +19,6 @@ if ( ! class_exists( 'WooCommerce_Support_Helper' ) ) {
 	 *
 	 * @package WooCommerce_Support_Helper
 	 * @since   1.0.0
-	 * @version 1.0.0
 	 */
 	class WooCommerce_Support_Helper {
 
@@ -37,7 +36,7 @@ if ( ! class_exists( 'WooCommerce_Support_Helper' ) ) {
 		 * Includes needed files.
 		 * 
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.0
 		 */
 		public function includes() {
 		
@@ -54,6 +53,15 @@ if ( ! class_exists( 'WooCommerce_Support_Helper' ) ) {
 				require_once( 'includes/class-wcsh-payment-import.php' );
 				require_once( 'includes/class-wcsh-settings-tabs-export.php' );
 				require_once( 'includes/class-wcsh-settings-tabs-import.php' );
+
+				/**
+				 * Subscriptions support. 
+				 * We only export if Subs is active, but we import if the data is there regardless.
+				 */
+				if ( class_exists( 'WC_Subscriptions_Admin' ) ) {
+					require_once( 'includes/class-wcsh-subscriptions-tab-export.php' );
+				}
+				require_once( 'includes/class-wcsh-subscriptions-tab-import.php' );
 			}
 		}
 	}
