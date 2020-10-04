@@ -30,10 +30,10 @@ if ( ! class_exists( 'WCSH_Subscriptions_Tab_Import' ) ) {
 		 * Constructor.
 		 *
 		 * @since   1.1.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 */
 		private function __construct() {
-			add_filter( 'wcsh_import_handlers', [ $this, 'register_import_handlers' ] );
+			add_filter( 'wcsh_import_handlers', array( $this, 'register_import_handlers' ) );
 			$this->importer = WCSH_Import::instance();
 		}
 
@@ -56,18 +56,18 @@ if ( ! class_exists( 'WCSH_Subscriptions_Tab_Import' ) ) {
 		 * Registers our import handlers for this class.
 		 *
 		 * @since   1.1.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 * @param   arr   $import_handlers The current import handlers we're adding to.
 		 * @return  arr   The updated array of import handlers.
 		 */
 		public function register_import_handlers( $import_handlers ) {
 
 			// Add our handlers and return. 
-			$import_handlers['subscriptions_tab'] = [
+			$import_handlers['subscriptions_tab'] = array(
 				'class'  => __CLASS__,
 				'method' => 'subscriptions_tab_import',
 				'notice' => 'This will import (overwrite) settings on the WooCommerce > Settings > Subscriptions page.',
-			];
+			);
 
 			return $import_handlers;
 		}

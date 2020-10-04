@@ -30,10 +30,10 @@ if ( ! class_exists( 'WCSH_Settings_Tabs_Export' ) ) {
 		 * Constructor.
 		 *
 		 * @since   1.0.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 */
 		private function __construct() {
-			add_filter( 'wcsh_export_handlers', [ $this, 'register_export_handlers' ] );
+			add_filter( 'wcsh_export_handlers', array( $this, 'register_export_handlers' ) );
 			$this->exporter = WCSH_Export::instance();
 		}
 
@@ -56,36 +56,36 @@ if ( ! class_exists( 'WCSH_Settings_Tabs_Export' ) ) {
 		 * Registers our export handlers for this class.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 * @param   arr   $export_handlers | The current export handlers we're adding to.
 		 * @return  arr   The updated array of import handlers.
 		 */
 		public function register_export_handlers( $export_handlers ) {
 
 			// Add our handlers and return. 
-			$export_handlers['general_tab'] = [
+			$export_handlers['general_tab'] = array(
 				'class'  => __CLASS__,
 				'method' => 'general_tab_export',
 				'notice' => 'Export settings from the WooCommerce > Settings > General page.',
-			];
+			);
 
-			$export_handlers['products_tab'] = [
+			$export_handlers['products_tab'] = array(
 				'class'  => __CLASS__,
 				'method' => 'products_tab_export',
 				'notice' => 'Export settings from the WooCommerce > Settings > Products pages.',
-			];
+			);
 
-			$export_handlers['tax_tab'] = [
+			$export_handlers['tax_tab'] = array(
 				'class'  => __CLASS__,
 				'method' => 'tax_tab_export',
 				'notice' => 'Export settings from the WooCommerce > Settings > Tax page, but not tax rates.',
-			];
+			);
 
-			$export_handlers['accounts_tab'] = [
+			$export_handlers['accounts_tab'] = array(
 				'class'  => __CLASS__,
 				'method' => 'accounts_tab_export',
 				'notice' => 'Export settings from the WooCommerce > Settings > Accounts &amp; Privacy page, but not tax rates.',
-			];
+			);
 
 			return $export_handlers;
 		}
@@ -94,33 +94,33 @@ if ( ! class_exists( 'WCSH_Settings_Tabs_Export' ) ) {
 		 * Handler for the WooCommerce > Settings > General tab.
 		 *
 		 * @since   1.0.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 * @return  arr   Array of settings.
 		 */
 		public function general_tab_export() {
 			// Hand off to generic exporter.
 			$settings = $this->exporter->generic_tab_export( 'WC_Settings_General' );
-			return [ 'general_tab' => $settings ];
+			return array( 'general_tab' => $settings );
 		}
 
 		/**
 		 * Handler for the WooCommerce > Settings > Products tab.
 		 *
 		 * @since   1.0.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 * @return  arr   Array of settings.
 		 */
 		public function products_tab_export() {
 			// Hand off to generic exporter.
 			$settings = $this->exporter->generic_tab_export( 'WC_Settings_Products' );
-			return [ 'products_tab' => $settings ];
+			return array( 'products_tab' => $settings );
 		}
 
 		/**
 		 * Handler for the WooCommerce > Settings > Tax tab.
 		 *
 		 * @since   1.0.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 * @return  arr   Array of settings.
 		 */
 		public function tax_tab_export() {
@@ -133,26 +133,26 @@ if ( ! class_exists( 'WCSH_Settings_Tabs_Export' ) ) {
 
 			// Create a new settings instance, and set the sections array.
 			$settings_obj = new WC_Settings_Tax();
-			$sections     = [ '' => 'General' ];
+			$sections     = array( '' => 'General' );
 
 			// Get the settings from the sections.
 			$settings = $this->exporter->get_section_settings( $settings_obj, $sections );
 
 			// Add settings to the export. 
-			return [ 'tax_tab' => $settings ];
+			return array( 'tax_tab' => $settings );
 		}
 
 		/**
 		 * Handler for the WooCommerce > Settings > Accounts & Privacy tab.
 		 *
 		 * @since   1.0.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 * @return  arr   Array of settings.
 		 */
 		public function accounts_tab_export() {
 			// Hand off to generic exporter.
 			$settings = $this->exporter->generic_tab_export( 'WC_Settings_Accounts' );
-			return [ 'accounts_tab' => $settings ];
+			return array( 'accounts_tab' => $settings );
 		}
 	}
 	

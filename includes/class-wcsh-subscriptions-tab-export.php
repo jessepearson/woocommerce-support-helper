@@ -30,10 +30,10 @@ if ( ! class_exists( 'WCSH_Subscriptions_Tab_Export' ) ) {
 		 * Constructor.
 		 *
 		 * @since   1.1.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 */
 		private function __construct() {
-			add_filter( 'wcsh_export_handlers', [ $this, 'register_export_handlers' ] );
+			add_filter( 'wcsh_export_handlers', array( $this, 'register_export_handlers' ) );
 			$this->exporter = WCSH_Export::instance();
 		}
 
@@ -56,18 +56,18 @@ if ( ! class_exists( 'WCSH_Subscriptions_Tab_Export' ) ) {
 		 * Registers our export handlers for this class.
 		 *
 		 * @since   1.1.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 * @param   arr   $export_handlers | The current export handlers we're adding to.
 		 * @return  arr   The updated array of import handlers.
 		 */
 		public function register_export_handlers( $export_handlers ) {
 
 			// Add our handlers and return. 
-			$export_handlers['subscriptions_tab'] = [
+			$export_handlers['subscriptions_tab'] = array(
 				'class'  => __CLASS__,
 				'method' => 'subscriptions_tab_export',
 				'notice' => 'Export settings from the WooCommerce > Settings > Subscriptions page.',
-			];
+			);
 
 			return $export_handlers;
 		}
@@ -76,13 +76,13 @@ if ( ! class_exists( 'WCSH_Subscriptions_Tab_Export' ) ) {
 		 * Handler for the WooCommerce > Settings > General tab.
 		 *
 		 * @since   1.1.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 * @return  arr   Array of settings.
 		 */
 		public function subscriptions_tab_export() {
 			
 			$settings = $this->exporter->generic_tab_export( 'WC_Subscriptions_Admin' );
-			return [ 'subscriptions_tab' => $settings ];
+			return array( 'subscriptions_tab' => $settings );
 		}
 	}
 	
