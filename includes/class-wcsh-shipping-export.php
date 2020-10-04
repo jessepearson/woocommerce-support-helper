@@ -21,10 +21,10 @@ if ( ! class_exists( 'WCSH_Shipping_Export' ) ) {
 		 * Constructor.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 */
 		private function __construct() {
-			add_filter( 'wcsh_export_handlers', [ $this, 'register_export_handlers' ] );
+			add_filter( 'wcsh_export_handlers', array( $this, 'register_export_handlers' ) );
 		}
 
 		/**
@@ -46,18 +46,18 @@ if ( ! class_exists( 'WCSH_Shipping_Export' ) ) {
 		 * Registers our export handlers for this class.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 * @param   arr   $export_handlers The current export handlers we're adding to.
 		 * @return  arr   The updated array of import handlers.
 		 */
 		public function register_export_handlers( $export_handlers ) {
 
 			// Add our handlers and return. 
-			$export_handlers['shipping_zones'] = [
+			$export_handlers['shipping_zones'] = array(
 				'class'  => __CLASS__,
 				'method' => 'shipping_zone_export',
 				'notice' => 'Export the Shipping Zones, their Shipping Methods, Shipping Classes, and Shipping Options under the WooCommerce > Settings > Shipping page.',
-			];
+			);
 
 			return $export_handlers;
 		}
@@ -166,14 +166,14 @@ if ( ! class_exists( 'WCSH_Shipping_Export' ) ) {
 		 * Gets the priorites set within the Table Rates instances.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 * @param   arr   $table_rates Array of all of the Table Rates.
 		 * @return  arr   Array of the priorities for the Table Rates.
 		 */
 		public function get_table_rate_priorities( $table_rates ) {
 
-			$processed  = [];
-			$priorities = [];
+			$processed  = array();
+			$priorities = array();
 
 			// Go through each Table Rate and query its priorities.
 			foreach ( $table_rates as $rate ) {

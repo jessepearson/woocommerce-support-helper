@@ -72,7 +72,7 @@ if ( ! class_exists( 'WCSH_Import' ) ) {
 		 * Handles the first step of importing by saving the data to the database, then sending back to confirmation form.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 */
 		public function import() {
 
@@ -84,10 +84,11 @@ if ( ! class_exists( 'WCSH_Import' ) ) {
 			update_option( 'wcsh_import_temp', $this->file_data );
 
 			// Send back to the form to display the confirmation for import.
-			$redirect_url = add_query_arg( [ 
-				'page'   => 'woocommerce-support-helper',
-				'action' => 'confirm_import', 
-				], 
+			$redirect_url = add_query_arg( 
+				array( 
+					'page'   => 'woocommerce-support-helper',
+					'action' => 'confirm_import', 
+				), 
 				admin_url( 'admin.php' ) 
 			);
 			wp_safe_redirect( $redirect_url );
@@ -124,7 +125,7 @@ if ( ! class_exists( 'WCSH_Import' ) ) {
 		 * Gets our import handlers.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 * @return  
 		 */
 		public function get_import_handlers() {
@@ -135,7 +136,7 @@ if ( ! class_exists( 'WCSH_Import' ) ) {
 			}
 
 			// Use the filter to get registered handlers and return them. 
-			$this->import_handlers = apply_filters( 'wcsh_import_handlers', [] );
+			$this->import_handlers = apply_filters( 'wcsh_import_handlers', array() );
 			return $this->import_handlers;
 		}
 

@@ -26,10 +26,10 @@ if ( ! class_exists( 'WooCommerce_Support_Helper' ) ) {
 		 * Constructor.
 		 * 
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 */
 		public function __construct() {
-			add_action( 'init', [ $this, 'includes' ] );
+			add_action( 'init', array( $this, 'includes' ) );
 		}
 
 		/**

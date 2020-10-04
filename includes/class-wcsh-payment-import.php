@@ -21,10 +21,10 @@ if ( ! class_exists( 'WCSH_Payment_Import' ) ) {
 		 * Constructor.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 */
 		private function __construct() {
-			add_filter( 'wcsh_import_handlers', [ $this, 'register_import_handlers' ] );
+			add_filter( 'wcsh_import_handlers', array( $this, 'register_import_handlers' ) );
 		}
 
 		/**
@@ -46,18 +46,18 @@ if ( ! class_exists( 'WCSH_Payment_Import' ) ) {
 		 * Registers our import handlers for this class.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 * @param   arr   $import_handlers | The current import handlers we're adding to.
 		 * @return  arr   The updated array of import handlers.
 		 */
 		public function register_import_handlers( $import_handlers ) {
 
 			// Add our handlers and return. 
-			$import_handlers['gateways'] = [
+			$import_handlers['gateways'] = array(
 				'class'  => __CLASS__,
 				'method' => 'payment_data_import',
 				'notice' => 'This will import (overwrite) Payment Method settings.',
-			];
+			);
 
 			return $import_handlers;
 		}

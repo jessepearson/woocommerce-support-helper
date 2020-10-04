@@ -21,10 +21,10 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 		 * Shipping classes.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 * @var
 		 */
-		public $shipping_classes = [];
+		public $shipping_classes = array();
 
 		/**
 		 * Shipping method instance settings.
@@ -39,10 +39,10 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 		 * Shippin gmethod instance ids.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 * @var
 		 */
-		public $instance_ids = [];
+		public $instance_ids = array();
 
 		/**
 		 * The instance of our importer.
@@ -57,10 +57,10 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 		 * Constructor.
 		 *
 		 * @since   1.0.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 */
 		private function __construct() {
-			add_filter( 'wcsh_import_handlers', [ $this, 'register_import_handlers' ] );
+			add_filter( 'wcsh_import_handlers', array( $this, 'register_import_handlers' ) );
 			$this->importer = WCSH_Import::instance();
 		}
 
@@ -83,18 +83,18 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 		 * Registers our import handlers for this class.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 * @param   arr   $import_handlers The current import handlers we're adding to.
 		 * @return  arr   The updated array of import handlers.
 		 */
 		public function register_import_handlers( $import_handlers ) {
 
 			// Add our handlers and return. 
-			$import_handlers['shipping_zones'] = [
+			$import_handlers['shipping_zones'] = array(
 				'class'  => __CLASS__,
 				'method' => 'shipping_zone_import',
 				'notice' => 'This will import Shipping Zones (append) and their methods, Shipping Classes (append), and Shipping Options (overwrite).',
-			];
+			);
 
 			return $import_handlers;
 		}
@@ -131,7 +131,7 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 		 * Handler for importing the shipping classes from the data.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 */
 		public function import_shipping_classes() {
 
@@ -139,10 +139,10 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 			foreach ( $this->file_data['shipping_classes'] as $class ) {
 				
 				// Set the proper args and insert the term.
-				$args = [
+				$args = array(
 					'slug'        => $class['slug'],
 					'description' => $class['description'],
-				];
+				);
 				$term = wp_insert_term( $class['name'] . ' (imported)', $class['taxonomy'], $args );
 				
 				// If the term slug already exists, query that term for us to use.
@@ -153,10 +153,10 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 				
 				// Get the new term, then add both to the array for future usage.
 				$term = get_term( $term['term_id'], $class['taxonomy'], 'ARRAY_A' );
-				$this->shipping_classes[ $class['term_id'] ] = [
+				$this->shipping_classes[ $class['term_id'] ] = array(
 					'new'      => $term, 
 					'original' => $class,
-				];
+				);
 
 				WCSH_Logger::log( 'Shipping class added: '. $class['name'] );
 			}
@@ -166,7 +166,7 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 		 * Handler for importing the shipping zones.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 */
 		public function import_shipping_zones() {
 			global $wpdb;
@@ -209,7 +209,7 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 
 						// This will help us clean up settings before adding them to the database. 
 						if ( method_exists( $this, 'fix_' . $method['id'] . '_settings' ) ) {
-							call_user_func( [ $this, 'fix_' . $method['id'] . '_settings' ] );
+							call_user_func( array( $this, 'fix_' . $method['id'] . '_settings' ) );
 						}
 						
 						// This adds settings for the instance under the method in the zone.
@@ -224,8 +224,8 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 						if ( isset( $method['enabled'] ) && 'no' == $method['enabled'] ) {
 							$wpdb->update( 
 								"{$wpdb->prefix}woocommerce_shipping_zone_methods",
-								[ 'is_enabled' => 0 ],
-								[ 'instance_id' => absint( $instance_id ) ]
+								array( 'is_enabled' => 0 ),
+								array( 'instance_id' => absint( $instance_id ) )
 							);
 						}
 
@@ -283,7 +283,7 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 		 * Will add table rates, if they are found.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 */
 		public function maybe_fix_table_rates() {
 			global $wpdb;
@@ -327,7 +327,7 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 				// Insert row.
 				$result = $wpdb->insert(
 					$wpdb->prefix . 'woocommerce_shipping_table_rates',
-					[
+					array(
 						'rate_class'                => $rate_class,
 						'rate_condition'            => sanitize_title( $rate_condition ),
 						'rate_min'                  => $rate_min,
@@ -342,8 +342,8 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 						'shipping_method_id'        => $shipping_method_id,
 						'rate_abort'                => $rate_abort,
 						'rate_abort_reason'         => $rate_abort_reason,
-					],
-					[
+					),
+					array(
 						'%s',
 						'%s',
 						'%s',
@@ -358,7 +358,7 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 						'%d',
 						'%d',
 						'%s',
-					]
+					)
 				);
 
 				WCSH_Logger::log( 'Table rates have been added to method id: ' . $shipping_method_id );
@@ -374,7 +374,7 @@ if ( ! class_exists( 'WCSH_Shipping_Import' ) ) {
 
 				// Set the values and update the options.
 				$default = isset( $priority['default'] ) ? $priority['default'] : 10;
-				$classes = isset( $priority['classes'] ) ? $priority['classes'] : [];
+				$classes = isset( $priority['classes'] ) ? $priority['classes'] : array();
 				update_option( 'woocommerce_table_rate_default_priority_' . $this->instance_ids[ $instance ], $default );
 				update_option( 'woocommerce_table_rate_priorities_' . $this->instance_ids[ $instance ], $classes );
 			}
