@@ -1,6 +1,7 @@
 <?php
 /**
  * WCSH_Updater handles updating the plugin directly from the GitHub repo.
+ * Based off of https://github.com/rayman813/smashing-updater-plugin
  *
  * @package WooCommerce_Support_Helper
  * @since   1.1.1
