@@ -6,7 +6,7 @@
  * @since   1.1.0
  */
 if ( ! class_exists( 'WCSH_Subscriptions_Tab_Export' ) ) {
-	class WCSH_Subscriptions_Tab_Export extends WCSH_Settings_Tabs_Export {
+	class WCSH_Subscriptions_Tab_Export {
 
 		/**
 		 * The instance of our class.
@@ -57,7 +57,7 @@ if ( ! class_exists( 'WCSH_Subscriptions_Tab_Export' ) ) {
 		 *
 		 * @since   1.1.0
 		 * @version 1.1.1
-		 * @param   arr   $export_handlers | The current export handlers we're adding to.
+		 * @param   arr   $export_handlers The current export handlers we're adding to.
 		 * @return  arr   The updated array of import handlers.
 		 */
 		public function register_export_handlers( $export_handlers ) {
