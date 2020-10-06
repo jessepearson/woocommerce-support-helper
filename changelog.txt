@@ -1,5 +1,8 @@
 *** WooCommerce Support Helper Changelog ***
 
+2020-10-05 - version 1.1.2
+* Fix   - Commented out GitHub repo file and method due to errors.
+
 2020-10-05 - version 1.1.1
 * Add   - Set up to update via GitHub repo.
 * Tweak - Update arrays from bracket declaration.

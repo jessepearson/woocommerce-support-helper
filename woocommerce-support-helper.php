@@ -6,7 +6,7 @@
  * Author: Jesse Pearson
  * Author URI: https://github.com/jessepearson/
  * Text Domain: woocommerce-support-helper
- * Version: 1.1.1
+ * Version: 1.1.2
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,18 +26,18 @@ if ( ! class_exists( 'WooCommerce_Support_Helper' ) ) {
 		 * Constructor.
 		 * 
 		 * @since   1.0.0
-		 * @version 1.1.1
+		 * @version 1.1.2
 		 */
 		public function __construct() {
 			add_action( 'init', array( $this, 'includes' ) );
-			add_action( 'init', array( $this, 'plugin_updater' ) );
+			//add_action( 'init', array( $this, 'plugin_updater' ) );
 		}
 
 		/**
 		 * Includes needed files.
 		 * 
 		 * @since   1.0.0
-		 * @version 1.1.1
+		 * @version 1.1.2
 		 */
 		public function includes() {
 		
@@ -46,7 +46,7 @@ if ( ! class_exists( 'WooCommerce_Support_Helper' ) ) {
 				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-logger.php' );
 				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-tools.php' );
 				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-file-handler.php' );
-				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-updater.php' );
+				//require_once( dirname( __FILE__ ) .'/includes/class-wcsh-updater.php' );
 				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-export.php' );
 				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-import.php' );
 				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-shipping-export.php' );
