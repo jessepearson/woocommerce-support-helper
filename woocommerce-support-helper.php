@@ -6,7 +6,7 @@
  * Author: Jesse Pearson
  * Author URI: https://github.com/jessepearson/
  * Text Domain: woocommerce-support-helper
- * Version: 1.1.0
+ * Version: 1.1.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,39 +30,56 @@ if ( ! class_exists( 'WooCommerce_Support_Helper' ) ) {
 		 */
 		public function __construct() {
 			add_action( 'init', array( $this, 'includes' ) );
+			add_action( 'init', array( $this, 'plugin_updater' ) );
 		}
 
 		/**
 		 * Includes needed files.
 		 * 
 		 * @since   1.0.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 */
 		public function includes() {
 		
 			// Files only the admin needs.
 			if ( is_admin() ) {
-				require_once( 'includes/class-wcsh-logger.php' );
-				require_once( 'includes/class-wcsh-tools.php' );
-				require_once( 'includes/class-wcsh-file-handler.php' );
-				require_once( 'includes/class-wcsh-export.php' );
-				require_once( 'includes/class-wcsh-import.php' );
-				require_once( 'includes/class-wcsh-shipping-export.php' );
-				require_once( 'includes/class-wcsh-shipping-import.php' );
-				require_once( 'includes/class-wcsh-payment-export.php' );
-				require_once( 'includes/class-wcsh-payment-import.php' );
-				require_once( 'includes/class-wcsh-settings-tabs-export.php' );
-				require_once( 'includes/class-wcsh-settings-tabs-import.php' );
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-logger.php' );
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-tools.php' );
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-file-handler.php' );
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-updater.php' );
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-export.php' );
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-import.php' );
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-shipping-export.php' );
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-shipping-import.php' );
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-payment-export.php' );
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-payment-import.php' );
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-settings-tabs-export.php' );
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-settings-tabs-import.php' );
 
 				/**
 				 * Subscriptions support. 
 				 * We only export if Subs is active, but we import if the data is there regardless.
 				 */
 				if ( class_exists( 'WC_Subscriptions_Admin' ) ) {
-					require_once( 'includes/class-wcsh-subscriptions-tab-export.php' );
+					require_once( dirname( __FILE__ ) .'/includes/class-wcsh-subscriptions-tab-export.php' );
 				}
-				require_once( 'includes/class-wcsh-subscriptions-tab-import.php' );
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-subscriptions-tab-import.php' );
 			}
+		}
+
+		/**
+		 * Initializes our plugin updater.
+		 * 
+		 * @since   1.0.0
+		 * @version 1.1.1
+		 */
+		public function plugin_updater() {
+			
+			// Get our updater object, set user and repo, and initialize the updater.
+			$updater = new WCSH_Updater( __FILE__ );
+			$updater->set_username( 'jessepearson' );
+			$updater->set_repository( 'woocommerce-support-helper' );
+			$updater->initialize();
 		}
 	}
 
