@@ -21,10 +21,10 @@ if ( ! class_exists( 'WCSH_Payment_Export' ) ) {
 		 * Constructor.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 */
 		private function __construct() {
-			add_filter( 'wcsh_export_handlers', [ $this, 'register_export_handlers' ] );
+			add_filter( 'wcsh_export_handlers', array( $this, 'register_export_handlers' ) );
 		}
 
 		/**
@@ -46,18 +46,18 @@ if ( ! class_exists( 'WCSH_Payment_Export' ) ) {
 		 * Registers our export handlers for this class.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 * @param   arr   $export_handlers | The current export handlers we're adding to.
 		 * @return  arr   The updated array of import handlers.
 		 */
 		public function register_export_handlers( $export_handlers ) {
 
 			// Add our handlers and return. 
-			$export_handlers['gateways'] = [
+			$export_handlers['gateways'] = array(
 				'class'  => __CLASS__,
 				'method' => 'payment_data_export',
 				'notice' => 'Export the payment gateways from the WooCommerce > Settings > Payments page.',
-			];
+			);
 
 			return $export_handlers;
 		}
@@ -66,14 +66,14 @@ if ( ! class_exists( 'WCSH_Payment_Export' ) ) {
 		 * Handler for exporting the payment data.
 		 *
 		 * @since   1.0.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 * @return  arr   Array of payment gateways and their settings.
 		 */
 		public function payment_data_export() {
 
 			// Get all of the payment gateways.
 			$gateways = WC()->payment_gateways->payment_gateways();
-			$settings = [];
+			$settings = array();
 			
 			// Log how many we have.
 			WCSH_Logger::log( count( $gateways ) . ' Payment Gateways have been found.' );
@@ -89,7 +89,7 @@ if ( ! class_exists( 'WCSH_Payment_Export' ) ) {
 				}
 			}
 
-			return [ 'gateways' => $settings ];
+			return array( 'gateways' => $settings );
 		}
 	}
 

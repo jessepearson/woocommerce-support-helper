@@ -12,7 +12,7 @@ if ( ! class_exists( 'WCSH_Logger' ) ) {
 		 * It's log, it's log, it's better than bad, it's good!
 		 * 
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 * @param   str   $log String to be logged.
 		 */
 		static function log( $log ) {
@@ -23,7 +23,7 @@ if ( ! class_exists( 'WCSH_Logger' ) ) {
 			}
 			
 			$logger = wc_get_logger();
-			$logger->info( $log, [ 'source' => 'woocommerce-support-helper' ] );
+			$logger->info( $log, array( 'source' => 'woocommerce-support-helper' ) );
 		}
 	}
 }

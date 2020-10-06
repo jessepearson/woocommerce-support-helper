@@ -21,10 +21,10 @@ if ( ! class_exists( 'WCSH_Export' ) ) {
 		 * Data that is going to be exported. 
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 * @var
 		 */
-		public $export_data = [];
+		public $export_data = array();
 
 		/**
 		 * Our handlers for handling the different export types.
@@ -72,7 +72,7 @@ if ( ! class_exists( 'WCSH_Export' ) ) {
 		 * Gets our export handlers.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 * @return  arr   Returns an array of the registered export handlers.
 		 */
 		public function get_export_handlers() {
@@ -83,7 +83,7 @@ if ( ! class_exists( 'WCSH_Export' ) ) {
 			}
 
 			// Use the filter to get registered handlers and return them. 
-			$this->export_handlers = apply_filters( 'wcsh_export_handlers', [] );
+			$this->export_handlers = apply_filters( 'wcsh_export_handlers', array() );
 			return $this->export_handlers;
 		}
 
@@ -184,7 +184,7 @@ if ( ! class_exists( 'WCSH_Export' ) ) {
 		 * Handles exporting the generic tabs.
 		 *
 		 * @since   1.0.0
-		 * @version 1.1.0
+		 * @version 1.1.1
 		 * @param   str   $class The class that's used for that particular settings tab.
 		 * @return  arr   An array of all of the settings for all sections under that tab.
 		 */
@@ -198,12 +198,12 @@ if ( ! class_exists( 'WCSH_Export' ) ) {
 
 			// Create a new settings instance, and get the sections array.
 			$settings_obj = new $class();
-			$sections     = method_exists( $settings_obj, 'get_sections') ? $settings_obj->get_sections() : [];
-			$settings     = [];
+			$sections     = method_exists( $settings_obj, 'get_sections') ? $settings_obj->get_sections() : array();
+			$settings     = array();
 
 			// If no sections returned, add a general one.
 			if ( 0 === count( $sections ) ) {
-				$sections = [ '' => 'General' ];
+				$sections = array( '' => 'General' );
 			}
 
 			// Get settings from each section and return them.
