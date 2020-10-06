@@ -20,18 +20,18 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 		 * Constructor.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 */
 		public function __construct() {
-			add_action( 'admin_menu', [ $this, 'add_submenu_page' ], 99 );
-			add_action( 'init', [ $this, 'catch_requests' ], 20 );
+			add_action( 'admin_menu', array( $this, 'add_submenu_page' ), 99 );
+			add_action( 'init', array( $this, 'catch_requests' ), 20 );
 		}
 
 		/**
 		 * Adds submenu page to tools.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 */
 		public function add_submenu_page() {
 			add_submenu_page( 
@@ -40,15 +40,15 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 				__( 'Support Helper', 'woocommerce-support-helper' ),
 				'manage_options',
 				'woocommerce-support-helper',
-				[ $this, 'wcsh_tools_page' ]
-				);
+				array( $this, 'wcsh_tools_page' )
+			);
 		}
 
 		/**
 		 * Renders the tool page.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 */
 		public function wcsh_tools_page() {
 
@@ -106,7 +106,7 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 			} 
 
 			// Set the form action url and file type.
-			$action_url = add_query_arg( [ 'page' => 'woocommerce-support-helper' ], admin_url( 'admin.php' ) );
+			$action_url = add_query_arg( array( 'page' => 'woocommerce-support-helper' ), admin_url( 'admin.php' ) );
 			$file_ext   = WCSH_File_Handler::can_use_zip() ? '.zip' : '.json';
 
 			// If an import has been submitted.
@@ -244,7 +244,7 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 		 * Catches form requests.
 		 *
 		 * @since   1.0.0
-		 * @version 1.0.0
+		 * @version 1.1.1
 		 */
 		public function catch_requests() {
 
@@ -259,12 +259,12 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 			}
 
 			// Actions correspond to the tools on the page.
-			$actions = [
+			$actions = array(
 				'delete_shipping_zones',
 				'import_settings',
 				'confirm_import',
 				'export_settings',
-			];
+			);
 
 			// If it's not a good action, exit.
 			if ( ! in_array( $_POST['action'], $actions ) ) {
@@ -277,7 +277,7 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 			}
 
 			// Hand off to the proper handler.
-			call_user_func( [ $this, $_POST['action'] ] );
+			call_user_func( array( $this, $_POST['action'] ) );
 		}
 
 		/**
