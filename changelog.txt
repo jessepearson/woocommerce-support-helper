@@ -1,5 +1,8 @@
 *** WooCommerce Support Helper Changelog ***
 
+2020-10-06 - version 1.1.3
+* Fix   - Fixed GitHub updater.
+
 2020-10-05 - version 1.1.2
 * Fix   - Commented out GitHub repo file and method due to errors.
 

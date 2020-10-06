@@ -208,7 +208,6 @@ if ( ! class_exists( 'WCSH_Updater' ) ) {
 					$this->get_repository_info();
 					$out_of_date = version_compare( $this->github_response['tag_name'], $checked[ $this->basename ], '>' );
 
-
 					// If it's out of date.
 					if ( $out_of_date ) {
 
