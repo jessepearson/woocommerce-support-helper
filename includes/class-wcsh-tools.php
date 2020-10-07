@@ -20,11 +20,12 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 		 * Constructor.
 		 *
 		 * @since   1.0.0
-		 * @version 1.1.1
+		 * @version 1.1.4
 		 */
 		public function __construct() {
 			add_action( 'admin_menu', array( $this, 'add_submenu_page' ), 99 );
 			add_action( 'init', array( $this, 'catch_requests' ), 20 );
+			add_action( 'admin_init', array( $this, 'maybe_show_hidden_meta' ) );
 		}
 
 		/**
@@ -48,7 +49,7 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 		 * Renders the tool page.
 		 *
 		 * @since   1.0.0
-		 * @version 1.1.1
+		 * @version 1.1.4
 		 */
 		public function wcsh_tools_page() {
 
@@ -233,7 +234,25 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 						</table>
 					</form>
 
+					<h3>Show Hidden Post Meta</h3>
+					<form action="<?php echo $action_url; ?>" method="post">
+						<table>
+							<tr>
+								<td>
+									<input type="checkbox" name="show_hidden_post_meta" id="show_hidden_post_meta" value="yes" <?php checked( 'yes', get_option( 'wcsh_show_hidden_post_meta', false ), true );?>>
+									&nbsp;<label for="show_hidden_post_meta">Allows viewing and editing of hidden meta on posts (products, orders, etc)</label>
 
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="submit" class="button" value="Update" />
+									<input type="hidden" name="action" value="show_hidden_post_meta" />
+									<?php wp_nonce_field( 'show_hidden_post_meta' ); ?>
+								</td>
+							</tr>
+						</table>
+					</form>
 
 				</div>
 			</div>
@@ -244,7 +263,7 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 		 * Catches form requests.
 		 *
 		 * @since   1.0.0
-		 * @version 1.1.1
+		 * @version 1.1.4
 		 */
 		public function catch_requests() {
 
@@ -264,6 +283,7 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 				'import_settings',
 				'confirm_import',
 				'export_settings',
+				'show_hidden_post_meta',
 			);
 
 			// If it's not a good action, exit.
@@ -391,6 +411,37 @@ if ( ! class_exists( 'WCSH_Tools' ) ) {
 			$notice = count( $zones ) . ' Shipping Zones have been deleted.';
 			WCSH_Logger::log( $notice );
 			$this->print_notice( $notice, 'success' );
+		}
+
+		/**
+		 * Enables and disables showing hidden post meta.
+		 *
+		 * @since   1.1.4
+		 * @version 1.1.4
+		 */
+		public function show_hidden_post_meta() {
+
+			// Save the field values.
+			$update = ( ! isset( $_POST['show_hidden_post_meta'] ) || null === $_POST['show_hidden_post_meta'] ) ? 'no' : 'yes';
+			update_option( 'wcsh_show_hidden_post_meta', $update );
+
+			$notice = 'Show hidden post meta setting updated to: ' . $update;
+			WCSH_Logger::log( $notice );
+			$this->print_notice( $notice, 'success' );
+		}
+
+		/**
+		 * Shows hidden post meta.
+		 *
+		 * @since   1.1.4
+		 * @version 1.1.4
+		 */
+		public function maybe_show_hidden_meta() {
+
+			// If we want hidden post meta, add a filter that shows it.
+			if ( get_option( 'wcsh_show_hidden_post_meta', false ) ) {
+				add_filter( 'is_protected_meta', '__return_false', 999 );
+			}
 		}
 
 		/**
