@@ -118,10 +118,25 @@ if ( ! class_exists( 'WCSH_Settings_Tabs_Import' ) ) {
 		 * Handles updating settings under WooCommerce > Settings > Tax. 
 		 *
 		 * @since   1.0.0
-		 * @version 1.1.0
+		 * @version 1.1.4
 		 * @param   arr   $data The settings import array.
 		 */
 		public function tax_tab_import( $data ) {
+
+			// We need to make sure our class is available to get settings from.
+			if ( ! class_exists( 'WC_Settings_Tax' ) ) {
+				// This does just that.
+				$settings_pages = WC_Admin_Settings::get_settings_pages();
+			}
+
+			// Tax classes are set separately than the rest of the settings. We use WC core methods to add them.
+			$wc_tax      = new WC_Settings_Tax();
+			$tax_classes = array_merge( $data['tax_tab']['woocommerce_tax_classes'], WC_Tax::get_tax_classes() );
+			$wc_tax->save_tax_classes( implode( "\n", $tax_classes ) );
+
+			// We no longer need this, and the default seems to be empty so, empty.
+			$data['tax_tab']['woocommerce_tax_classes'] = '';
+
 			// Hand off to generic handler.
 			$this->importer->update_generic_settings( $data['tax_tab'] );
 		}

@@ -1,7 +1,9 @@
 *** WooCommerce Support Helper Changelog ***
 
-2020-xx-xx - version 1.1.4
+2020-10-25 - version 1.1.4
+* Add   - Added Product Filters support.
 * Add   - Added option to show hidden post meta.
+* Fix   - Exporting and importing of Tax Classes now works. #7
 
 2020-10-06 - version 1.1.3
 * Fix   - Fixed GitHub updater.

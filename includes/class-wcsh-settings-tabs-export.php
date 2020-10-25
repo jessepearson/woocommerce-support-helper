@@ -120,7 +120,7 @@ if ( ! class_exists( 'WCSH_Settings_Tabs_Export' ) ) {
 		 * Handler for the WooCommerce > Settings > Tax tab.
 		 *
 		 * @since   1.0.0
-		 * @version 1.1.1
+		 * @version 1.1.4
 		 * @return  arr   Array of settings.
 		 */
 		public function tax_tab_export() {
@@ -137,6 +137,9 @@ if ( ! class_exists( 'WCSH_Settings_Tabs_Export' ) ) {
 
 			// Get the settings from the sections.
 			$settings = $this->exporter->get_section_settings( $settings_obj, $sections );
+
+			// The above doesn't get tax classes (it's actually empty), so we need to get those.
+			$settings['woocommerce_tax_classes'] = WC_Tax::get_tax_classes();
 
 			// Add settings to the export. 
 			return array( 'tax_tab' => $settings );
