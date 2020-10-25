@@ -6,7 +6,7 @@
  * Author: Jesse Pearson
  * Author URI: https://github.com/jessepearson/
  * Text Domain: woocommerce-support-helper
- * Version: 1.1.3
+ * Version: 1.1.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,7 +37,7 @@ if ( ! class_exists( 'WooCommerce_Support_Helper' ) ) {
 		 * Includes needed files.
 		 * 
 		 * @since   1.0.0
-		 * @version 1.1.3
+		 * @version 1.1.4
 		 */
 		public function includes() {
 
@@ -66,6 +66,15 @@ if ( ! class_exists( 'WooCommerce_Support_Helper' ) ) {
 					require_once( dirname( __FILE__ ) .'/includes/class-wcsh-subscriptions-tab-export.php' );
 				}
 				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-subscriptions-tab-import.php' );
+
+				/**
+				 * Product Filters support. 
+				 * We only export if PF is active, but we import if the data is there regardless.
+				 */
+				if ( defined( 'WC_PRODUCT_FILTER_VERSION' ) ) {
+					require_once( dirname( __FILE__ ) .'/includes/class-wcsh-product-filters-export.php' );
+				}
+				require_once( dirname( __FILE__ ) .'/includes/class-wcsh-product-filters-import.php' );
 			}
 		}
 

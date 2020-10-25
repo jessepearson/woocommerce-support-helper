@@ -31,6 +31,9 @@ Export and import (overwrite) settings for:
 * Tax settings tab - tax rates not included due to they have their own csv export and import.
 * Accounts & Privacy settings tab.
 
+#### Export and import settings tabs
+
+Export and import (append) Product Filters from the Product Filters extension.
 
 ### Installation
 
